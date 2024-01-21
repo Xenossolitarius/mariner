@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noImplicitAny": true,
+    "allowJs": true,
+    "noEmit": true,
+    "composite": true,
+    "noUnusedLocals": true,
+    "resolveJsonModule": true,
+    "lib": ["ESNext"],
+    "types": [
+      "node"
+    ],
+  },
+  "exclude": [
+    "**/dist/**",
+  ]
+}
+  

@@ -2,9 +2,32 @@
   "name": "@mariner/cli",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
+  "exports": "./bin/index.js",
+  "bin": {
+    "sail": "./bin/index.js",
+    "sail-cli": "./bin/index.js"
+  },
   "scripts": {
+    "start": "tsx ./src/index.ts",
+    "dev": "nodemon --config nodemon.server.json",
+    "build": "tsc ./src/index.ts",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix .",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "boxen": "^7.1.1",
+    "@mariner/config": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.32"
   },
   "keywords": [],
   "author": "",
