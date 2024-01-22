@@ -1,20 +1,26 @@
 #!/usr/bin/env node
 
-import { showStartingLogo } from './messages/start'
+import { start } from './steps/start'
 // import { help as helpMessage } from './messages/help'
 import './commands'
 
 import { program } from './utils/commander'
-import { getSails } from '@mariner/config'
+import { search } from './steps/search'
+import { select } from './steps/select'
 
-showStartingLogo()
+export const run = async () => {
+  start()
 
-console.log(process.argv)
-console.log(process.cwd())
+  console.log(process.cwd())
 
-await getSails()
+  const frigates = await search()
 
-// TODO: scan
+  const selectedFrigates = await select(frigates)
 
-program.parse()
-console.log('finish')
+  console.log(selectedFrigates)
+
+  // TODO: scan
+
+  program.parse()
+  console.log('finish')
+}

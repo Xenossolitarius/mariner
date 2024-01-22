@@ -13,10 +13,10 @@ const boxStyle: Options = {
 
 const text = `${chalk.bold(fullLogo)}
 
-${chalk.reset.cyan('Safe voyage in calm waters')}`
+${chalk.reset.cyan('Safe voyage in raugh waters')}`
 
-export const start = chalk.cyan(`
+export const startMessage = chalk.cyan(`
 ${boxen(text, boxStyle)}
 `)
 
-export const showStartingLogo = () => console.log(start)
+export const start = () => console.log(startMessage)
