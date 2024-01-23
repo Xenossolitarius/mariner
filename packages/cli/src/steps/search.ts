@@ -1,19 +1,19 @@
 import ora from 'ora'
-import { getFrigates } from '../../../kit/src'
-import { ENLISTING_FRIGATES, FRIGATES_FOUND, NO_FRIGATES_FOUND } from '../messages'
+import { getMarineConfigs } from '@mariner/kit'
+import { ENLISTING_NAVIGATORS, NAVIGATORS_FOUND, NO_NAVIGATORS_FOUND } from '../messages'
 import { exit } from './exit'
 
 export const search = async () => {
-  const spinner = ora({ text: ENLISTING_FRIGATES }).start()
+  const spinner = ora({ text: ENLISTING_NAVIGATORS }).start()
 
-  const frigates = await getFrigates()
+  const configs = await getMarineConfigs()
 
-  if (!frigates.length) {
-    spinner.fail(NO_FRIGATES_FOUND)
+  if (!configs.length) {
+    spinner.fail(NO_NAVIGATORS_FOUND)
     exit()
   } else {
-    spinner.succeed(FRIGATES_FOUND(frigates))
+    spinner.succeed(NAVIGATORS_FOUND(configs))
   }
 
-  return frigates
+  return configs
 }

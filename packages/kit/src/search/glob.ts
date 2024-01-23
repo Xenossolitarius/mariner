@@ -4,6 +4,6 @@ import { FILES } from '../constants'
 
 export const ignoreList = ['node_modules/**', 'dist']
 
-export const getSailConfigPaths = () => {
+export const getMarineConfigPaths = () => {
   return glob(`../../**/${FILES.config}`, { ignore: ignoreList, withFileTypes: true })
 }

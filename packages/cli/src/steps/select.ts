@@ -1,30 +1,30 @@
-import { FrigateSearch } from '../../../kit/src'
+import { MarineSearch } from '@mariner/kit'
 import inquirer from 'inquirer'
 import { exit } from './exit'
-import { NO_SELECTED_FRIGATES } from '../messages'
+import { NO_SELECTED_NAVIGATORS, SELECT_NAVIGATORS } from '../messages'
 
-export const select = async (frigates: FrigateSearch[]) => {
+export const select = async (configs: MarineSearch[]) => {
   const selection = [
     {
       type: 'checkbox',
-      message: 'Select frigates',
+      message: SELECT_NAVIGATORS,
       name: 'selection',
-      choices: frigates.map((frigate) => ({
-        name: `${frigate.name} - ${frigate.root}`,
+      choices: configs.map((config) => ({
+        name: `${config.name} - ${config.root}`,
         checked: true,
-        value: frigate.root,
+        value: config.root,
       })),
     },
   ]
 
   const results = (await inquirer.prompt(selection)) as { selection: string[] }
 
-  const selectedFrigates = frigates.filter((frigate) => results.selection.includes(frigate.root))
+  const selectedConfigs = configs.filter((config) => results.selection.includes(config.root))
 
-  if (!selectedFrigates.length) {
-    console.log(NO_SELECTED_FRIGATES)
+  if (!selectedConfigs.length) {
+    console.log(NO_SELECTED_NAVIGATORS)
     exit()
   }
 
-  return selectedFrigates
+  return selectedConfigs
 }

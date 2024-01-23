@@ -1,24 +1,24 @@
 import { type Path } from 'glob'
-import { getSailConfigPaths } from './glob'
+import { getMarineConfigPaths } from './glob'
 import { FILES } from '../constants'
 import { getJsonFileSync } from '../utils/json'
 import { slugify } from '../utils/slugify'
 
-export type FrigateSearch = {
+export type MarineSearch = {
   path: Path
   root: string
   valid: boolean
   name: string
 }
 
-const getSailConfig = (path: Path): FrigateSearch => {
+const getMarineConfig = (path: Path): MarineSearch => {
   const parent = path.parent?.fullpath() || '/'
 
   const hasEntryFile = !!path.readdirSync().find(({ name }) => name === FILES.entry)
 
   const packageJson = getJsonFileSync(`${parent}/package.json`)
 
-  const name = slugify(packageJson?.mariner?.name || packageJson?.name || path.parent?.name) || 'app'
+  const name = slugify(packageJson?.name || path.parent?.name) || 'app'
 
   return {
     path,
@@ -28,10 +28,8 @@ const getSailConfig = (path: Path): FrigateSearch => {
   }
 }
 
-export const getFrigates = async (): Promise<FrigateSearch[]> => {
-  const rawSailsConfigs = await getSailConfigPaths()
+export const getMarineConfigs = async (): Promise<MarineSearch[]> => {
+  const rawMarineConfigs = await getMarineConfigPaths()
 
-  const sailConfigs = rawSailsConfigs.map(getSailConfig)
-
-  return sailConfigs
+  return rawMarineConfigs.map(getMarineConfig)
 }

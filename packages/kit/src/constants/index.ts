@@ -1,4 +1,4 @@
 export const FILES = {
-  config: 'sail.config.ts',
-  entry: 'frigate.ts',
+  config: 'mariner.config.ts',
+  entry: 'navigator.ts',
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
+import { loadConfigFromFile, createServer } from 'vite'
 import { start } from './steps/start'
-// import { help as helpMessage } from './messages/help'
 import './commands'
 
 import { program } from './utils/commander'
@@ -13,14 +13,26 @@ export const run = async () => {
 
   console.log(process.cwd())
 
-  const frigates = await search()
+  const configs = await search()
 
-  const selectedFrigates = await select(frigates)
+  const selectedConfigs = await select(configs)
 
-  console.log(selectedFrigates)
+  console.log(selectedConfigs)
 
-  // TODO: scan
+  const file = await loadConfigFromFile(
+    { command: 'serve', mode: 'development' },
+    `${selectedConfigs[0].root}/mariner.config.ts`,
+  )
+  if (!file) return
 
+  const server = await createServer(file.config)
+
+  console.log(server)
+
+  console.log(file)
+
+  await server.listen(3000)
+  server.printUrls()
   program.parse()
   console.log('finish')
 }

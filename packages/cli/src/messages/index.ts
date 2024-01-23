@@ -1,12 +1,14 @@
 import chalk from 'chalk'
 
-export const ENLISTING_FRIGATES = 'Enlisting frigates...'
+export const ENLISTING_NAVIGATORS = 'Enlisting navigators...'
 
-export const NO_FRIGATES_FOUND = chalk.bold.red('No frigates found!')
+export const NO_NAVIGATORS_FOUND = chalk.bold.red('No navigators found!')
 
-export const NO_SELECTED_FRIGATES = chalk.bold.cyan('\nNo selected frigates. ')
+export const NO_SELECTED_NAVIGATORS = chalk.bold.cyan('\nNo selected navigators. ')
 
-export const FRIGATES_FOUND = (frigates: unknown[]) =>
-  chalk.bold.green(`Found ${frigates.length} ${frigates.length === 1 ? 'frigate' : 'frigates'}`)
+export const NAVIGATORS_FOUND = (navigators: unknown[]) =>
+  chalk.bold.green(`Found ${navigators.length} ${navigators.length === 1 ? 'navigator' : 'navigators'}`)
+
+export const SELECT_NAVIGATORS = 'Select navigators'
 
 export const EXITING = chalk.cyan('Mariner exiting...')

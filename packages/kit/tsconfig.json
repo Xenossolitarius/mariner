@@ -13,7 +13,7 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "types": [
       "node", 
       "vite"
