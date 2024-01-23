@@ -1,5 +1,5 @@
 import ora from 'ora'
-import { getMarineConfigs } from '@mariner/kit'
+import { getMarineConfigs } from 'mariner'
 import { ENLISTING_NAVIGATORS, NAVIGATORS_FOUND, NO_NAVIGATORS_FOUND } from '../messages'
 import { exit } from './exit'
 

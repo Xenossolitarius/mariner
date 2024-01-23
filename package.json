@@ -5,8 +5,12 @@
   "main": "index.js",
   "scripts": {
     "sail": "sail",
+    "clean:port": "sudo kill -9 $(sudo lsof -t -i:3000)",
     "clean:node": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "resolutions": {
+    "mariner": "workspace:*"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^6.19.1",

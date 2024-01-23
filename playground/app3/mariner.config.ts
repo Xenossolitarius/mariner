@@ -1,4 +1,4 @@
-import { defineMarinerConfig } from '@mariner/kit'
+import { defineMarinerConfig } from 'mariner'
 import react from '@vitejs/plugin-react'
 
 export default defineMarinerConfig(

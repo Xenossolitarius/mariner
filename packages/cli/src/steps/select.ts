@@ -1,4 +1,4 @@
-import { MarineSearch } from '@mariner/kit'
+import { MarineSearch } from 'mariner'
 import inquirer from 'inquirer'
 import { exit } from './exit'
 import { NO_SELECTED_NAVIGATORS, SELECT_NAVIGATORS } from '../messages'

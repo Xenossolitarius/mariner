@@ -1,19 +1,32 @@
 {
-  "name": "@mariner/kit",
+  "name": "mariner",
   "version": "1.0.0",
-  "description": "Toolkit for Mariner",
+  "description": "Mariner Framework",
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.mjs"
     },
+    "./navigator": {
+      "types": "./dist/navigator/index.d.ts",
+      "import": "./dist/navigator/index.mjs",
+      "require": "./dist/navigator/index.mjs"
+    },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "*": {
+      "navigator": [
+        "./dist/navigator/index.d.ts"
+      ]
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "dist/navigator"
   ],
   "scripts": {
     "build": "unbuild",

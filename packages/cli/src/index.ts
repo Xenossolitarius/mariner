@@ -4,7 +4,7 @@ import { loadConfigFromFile, createServer } from 'vite'
 import { start } from './steps/start'
 import './commands'
 
-import { program } from './utils/commander'
+// import { program } from './utils/commander'
 import { search } from './steps/search'
 import { select } from './steps/select'
 
@@ -22,17 +22,24 @@ export const run = async () => {
   const file = await loadConfigFromFile(
     { command: 'serve', mode: 'development' },
     `${selectedConfigs[0].root}/mariner.config.ts`,
+    selectedConfigs[0].root,
   )
   if (!file) return
+
+  console.log(file)
+
+  file.config.root = selectedConfigs[0].root
+
+  if (file.config.build?.rollupOptions?.input) {
+    file.config.build.rollupOptions.input = `./navigator.ts`
+  }
 
   const server = await createServer(file.config)
 
   console.log(server)
 
-  console.log(file)
-
   await server.listen(3000)
   server.printUrls()
-  program.parse()
+  // program.parse()
   console.log('finish')
 }

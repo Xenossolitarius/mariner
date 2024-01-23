@@ -1,4 +1,4 @@
-import { defineMarinerConfig } from '@mariner/kit'
+import { defineMarinerConfig } from 'mariner'
 import vue from '@vitejs/plugin-vue'
 
 export default defineMarinerConfig(

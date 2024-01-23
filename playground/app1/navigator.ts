@@ -1,4 +1,4 @@
-import { defineNavigator, createVueNavigator } from '@mariner/kit'
+import { defineNavigator, createVueNavigator } from 'mariner/navigator'
 import { createApp } from 'vue'
 import './style.css'
 import App from './src/App.vue'

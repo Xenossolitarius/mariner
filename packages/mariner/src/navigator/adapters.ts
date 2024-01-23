@@ -2,13 +2,9 @@ import type { App } from 'vue'
 import type ReactDOM from 'react-dom/client'
 import type React from 'react'
 
-type Navigator = {
+export type Navigator = {
   mount: (id: string) => void
   unmount: () => void
-}
-
-export type NavigatorOptions = {
-  navigator: Navigator
 }
 
 export const createVueNavigator = (app: App<Element>): Navigator => ({ mount: app.mount, unmount: app.unmount })
@@ -24,5 +20,3 @@ export const createReactNavigator = (rootFactory: typeof ReactDOM.createRoot, ap
     unmount: () => root?.unmount(),
   }
 }
-
-export const defineNavigator = (options: NavigatorOptions) => options
