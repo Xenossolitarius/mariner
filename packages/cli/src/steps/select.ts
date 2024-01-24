@@ -1,30 +1,31 @@
-import { MarineSearch } from 'mariner'
+import { MarinerProjectData } from 'mariner'
 import inquirer from 'inquirer'
 import { exit } from './exit'
-import { NO_SELECTED_NAVIGATORS, SELECT_NAVIGATORS } from '../messages'
+import { INVALID_NAVIGATOR_REASON, NO_SELECTED_NAVIGATORS, SELECT_NAVIGATORS } from '../messages'
 
-export const select = async (configs: MarineSearch[]) => {
+export const select = async (projects: MarinerProjectData[]) => {
   const selection = [
     {
       type: 'checkbox',
       message: SELECT_NAVIGATORS,
       name: 'selection',
-      choices: configs.map((config) => ({
-        name: `${config.name} - ${config.root}`,
+      choices: projects.map((project) => ({
+        name: `${project.name} - ${project.root}`,
         checked: true,
-        value: config.root,
+        value: project.root,
+        disabled: !project.isValid && INVALID_NAVIGATOR_REASON(project),
       })),
     },
   ]
 
   const results = (await inquirer.prompt(selection)) as { selection: string[] }
 
-  const selectedConfigs = configs.filter((config) => results.selection.includes(config.root))
+  const selected = projects.filter((project) => results.selection.includes(project.root))
 
-  if (!selectedConfigs.length) {
+  if (!selected.length) {
     console.log(NO_SELECTED_NAVIGATORS)
     exit()
   }
 
-  return selectedConfigs
+  return selected
 }

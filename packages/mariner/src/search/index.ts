@@ -1,20 +1,30 @@
 import { type Path } from 'glob'
-import { getMarineConfigPaths } from './glob'
 import { FILES } from '../constants'
 import { getJsonFileSync } from '../utils/json'
 import { slugify } from '../utils/slugify'
 
-export type MarineSearch = {
+import { glob } from 'glob'
+
+/**
+ * Source of truth for assuming a Mariner project (yea not searching the json deps)
+ */
+
+export const getMarineConfigPaths = () =>
+  glob(`**/${FILES.config}`, { ignore: ['node_modules/**', 'dist'], withFileTypes: true })
+
+export type MarinerProjectData = {
   path: Path
   root: string
-  valid: boolean
   name: string
+  isValid: boolean
+  hasNavigator: boolean
+  hasPackageJson: boolean
 }
 
-const getMarineConfig = (path: Path): MarineSearch => {
+const getMarineProjectData = (path: Path): MarinerProjectData => {
   const parent = path.parent?.fullpath() || '/'
 
-  const hasEntryFile = !!path.readdirSync().find(({ name }) => name === FILES.entry)
+  const hasNavigator = !!path.parent?.readdirSync().find(({ name }) => name === FILES.entry)
 
   const packageJson = getJsonFileSync(`${parent}/package.json`)
 
@@ -24,12 +34,31 @@ const getMarineConfig = (path: Path): MarineSearch => {
     path,
     root: parent,
     name,
-    valid: hasEntryFile,
+    isValid: hasNavigator, // for now this is the only check
+    hasNavigator,
+    hasPackageJson: !!packageJson,
   }
 }
 
-export const getMarineConfigs = async (): Promise<MarineSearch[]> => {
-  const rawMarineConfigs = await getMarineConfigPaths()
+export const getMarineProjects = async (): Promise<MarinerProjectData[]> => {
+  const marineConfigPaths = await getMarineConfigPaths()
 
-  return rawMarineConfigs.map(getMarineConfig)
+  return marineConfigPaths.map(getMarineProjectData)
+}
+
+type MarinerMode = {
+  // implement global modes (global envs, configs)
+}
+
+type MarinerOptions = {
+  projects: MarinerProjectData[]
+  modes?: MarinerMode[]
+}
+
+export const getMarinerOptions = async (): Promise<MarinerOptions> => {
+  const projects = await getMarineProjects()
+
+  return {
+    projects,
+  }
 }

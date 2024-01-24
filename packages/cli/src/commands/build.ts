@@ -1,8 +1,9 @@
-import { program } from '../utils/commander'
+import { program } from '@commander-js/extra-typings'
+import { options as serverOptions } from './shared/server'
+import { STARTING_BUILD } from '../messages'
 
-program
-  .command('build')
+serverOptions(program.command('build'))
   .description('Build Micro Frontends')
-  .action(() => {
-    console.log('build')
+  .action((mode, options) => {
+    console.log(STARTING_BUILD)
   })

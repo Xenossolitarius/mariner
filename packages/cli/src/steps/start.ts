@@ -13,7 +13,7 @@ const boxStyle: Options = {
 
 const text = `${chalk.bold(fullLogo)}
 
-${chalk.reset.cyan('Safe voyage in raugh waters')}`
+${chalk.cyan.bold('~~~ Safe voyage in raugh waters ~~~')}`
 
 export const startMessage = chalk.cyan(`
 ${boxen(text, boxStyle)}
