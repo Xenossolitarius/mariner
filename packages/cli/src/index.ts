@@ -17,8 +17,6 @@ export const run = async () => {
 
   const selectedConfigs = await select(configs)
 
-  console.log(selectedConfigs)
-
   const file = await loadConfigFromFile(
     { command: 'serve', mode: 'development' },
     `${selectedConfigs[0].root}/mariner.config.ts`,
@@ -26,17 +24,11 @@ export const run = async () => {
   )
   if (!file) return
 
-  console.log(file)
+  console.log(file.config)
 
-  file.config.root = selectedConfigs[0].root
+  const server = await createServer({ ...file.config, root: selectedConfigs[0].root, configFile: false })
 
-  if (file.config.build?.rollupOptions?.input) {
-    file.config.build.rollupOptions.input = `./navigator.ts`
-  }
-
-  const server = await createServer(file.config)
-
-  console.log(server)
+  console.log(server.config)
 
   await server.listen(3000)
   server.printUrls()
