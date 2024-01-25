@@ -15,27 +15,42 @@ serverOptions(program.command('dev', { isDefault: true }).description('Serve Mic
 
     const projects = await configure(options.mode)
 
+    const projectRoot = projects[0].root
+
     const file = await loadConfigFromFile(
       { command: 'serve', mode: 'development' },
-      `${projects[0].root}/mariner.config.ts`,
-      projects[0].root,
+      `${projectRoot}/mariner.config.ts`,
+      projectRoot,
     )
+
     if (!file) return
 
-    console.log(file.config)
+    const viteServer1 = await createViteServer({
+      // ...file.config,
+      // base: '/app2',
+      root: projectRoot,
+      configFile: `${projectRoot}/vite.config.ts`,
+      server: { middlewareMode: true, origin: 'http://localhost:3000' },
+      appType: 'spa',
+    })
 
-    const viteServer = await createViteServer({ ...file.config, root: projects[0].root, configFile: false , server: {middlewareMode: true}, appType: 'custom'})
+    // const viteServer2 = await createViteServer({
+    //   // ...file.config,
+    //   base: '/app1',
+    //   root: projects[1].root,
+    //   configFile: `${projects[1].root}/mariner.config.ts`,
+    //   server: { middlewareMode: true },
+    //   appType: 'custom',
+    // })
 
     const app = new Koa()
 
-    app.use(koaConnect(viteServer.middlewares))
-
+    // app.use(koaConnect(viteServer2.middlewares))
+    app.use(koaConnect(viteServer1.middlewares))
 
     app.listen(3000, () => {
       console.log('Started')
     })
-
-
 
     // const server = await createServer({ ...file.config, root: projects[0].root, configFile: false })
 

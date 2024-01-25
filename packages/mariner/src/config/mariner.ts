@@ -17,9 +17,16 @@ export const SAIL_DEFAULTS = {
 const getViteConfig = (/* marinerConfig: MarinerConfig */): UserConfig => {
   return {
     build: {
+      modulePreload: {
+        polyfill: false,
+      },
       manifest: true,
       rollupOptions: {
-        input: `./${FILES.entry}`,
+        input: FILES.entry,
+        preserveEntrySignatures: 'exports-only',
+        output: {
+          // format: 'esm',
+        },
       },
     },
   }
