@@ -29,7 +29,7 @@ const examplePlugin = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), devManifest(), cssInjectedByJsPlugin(), splitVendorChunkPlugin(), examplePlugin()],
-  base: '/app',
+  //  base: '/app',
   build: {
     modulePreload: {
       polyfill: false,

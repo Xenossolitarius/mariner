@@ -6,6 +6,7 @@ import { configure } from '../steps/configure'
 
 import Koa from 'koa'
 import koaConnect from 'koa-connect'
+import proxy from 'koa-proxies'
 
 serverOptions(program.command('dev', { isDefault: true }).description('Serve Micro Frontends'))
   .option('-m, --mode <mode>', 'Specify the mariner mode')
@@ -25,14 +26,35 @@ serverOptions(program.command('dev', { isDefault: true }).description('Serve Mic
 
     if (!file) return
 
+    // const viteServer1 = await createViteServer({
+    //   // ...file.config,
+    //   // base: '/app2',
+    //   root: projectRoot,
+    //   configFile: `${projectRoot}/vite.config.ts`,
+    //   server: { middlewareMode: true, origin: 'http://localhost:3000' },
+    //   appType: 'spa',
+    // })
     const viteServer1 = await createViteServer({
       // ...file.config,
-      // base: '/app2',
+      base: '/app2',
       root: projectRoot,
       configFile: `${projectRoot}/vite.config.ts`,
-      server: { middlewareMode: true, origin: 'http://localhost:3000' },
+      server: { origin: 'http://localhost:3001', port: 3001 },
       appType: 'spa',
     })
+    const viteServer2 = await createViteServer({
+      // ...file.config,
+      base: '/app1',
+      root: projects[1].root,
+      configFile: `${projects[1].root}/mariner.config.ts`,
+      server: { origin: 'http://localhost:3002', port: 3002 },
+      appType: 'spa',
+    })
+
+    await viteServer1.listen()
+    await viteServer2.listen()
+
+    console.log('ran servers?')
 
     // const viteServer2 = await createViteServer({
     //   // ...file.config,
@@ -45,8 +67,34 @@ serverOptions(program.command('dev', { isDefault: true }).description('Serve Mic
 
     const app = new Koa()
 
+    const rewrite = (app: string) => {
+      return (path: string) => {
+        if (path.includes('navigator.ts')) return path
+
+        return path.replace(new RegExp('/^/' + app + '/'), '')
+      }
+    }
+
+    app.use(
+      proxy('/app2', {
+        target: `http://localhost:${viteServer1.config.server.port}`,
+        rewrite: rewrite('app2'),
+        changeOrigin: true,
+        logs: true,
+      }),
+    )
+
+    app.use(
+      proxy('/app1', {
+        target: `http://localhost:${viteServer2.config.server.port}`,
+        rewrite: rewrite('app1'),
+        changeOrigin: true,
+        logs: true,
+      }),
+    )
+
     // app.use(koaConnect(viteServer2.middlewares))
-    app.use(koaConnect(viteServer1.middlewares))
+    // app.use(koaConnect(viteServer1.middlewares))
 
     app.listen(3000, () => {
       console.log('Started')

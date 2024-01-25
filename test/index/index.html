@@ -8,22 +8,21 @@
   </head>
   <body>
     <div id="app2"></div>
-    <script type="module" src="http://localhost:3000/app/@vite/client"></script>
+    <script type="module" src="http://localhost:3000/app2/@vite/client"></script>
     <script type="module">
       console.log('what')
-      import module2 from 'http://localhost:3000/app/navigator.ts'
+      import module2 from 'http://localhost:3000/app2/navigator.ts'
       console.log(module2)
         const navigator2 = module2.navigator
         navigator2.mount('#app2')
     </script>
-    <!-- <div id="app1"></div> -->
-    <!-- <script type="module">
+    <div id="app1"></div>
+    <script type="module">
       console.log('what')
       import module1 from 'http://localhost:3000/app1/navigator.ts'
-      console.log(module)
         const navigator1 = module1.navigator
         navigator1.mount('#app1')
-    </script> -->
+    </script>
 
   </body>
 </html>
