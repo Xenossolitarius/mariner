@@ -1,12 +1,10 @@
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 
-export const getJsonFileSync = (filePath: string) => {
+export const getJSON = async <T>(filePath: string, onError?: () => void) => {
   try {
-    const jsonData = fs.readFileSync(filePath, 'utf8')
-    return JSON.parse(jsonData)
+    return JSON.parse(await fs.readFile(filePath, 'utf8')) as T
   } catch (error) {
-    const e = error as Error
-    console.error(`Error reading JSON file synchronously: ${e.message}`)
+    onError && onError()
     return null
   }
 }

@@ -1,45 +1,40 @@
 import { type UserConfig, defineConfig } from 'vite'
-import { SailTypes, type SailType } from '../enums'
 import { defu } from 'defu'
 import { FILES } from '../constants'
 
 export type MarinerConfig = {
-  name: string
+  /**
+   * Mariner project actual name, most of the naming is permissive because will be slugified
+   */
+  mariner: string
+  /**
+   * Force mount id
+   * @default 'some unusable template'
+   */
   mountId?: string
-  type?: SailType
-}
+} & UserConfig
 
-export const SAIL_DEFAULTS = {
-  mountId: 'app',
-  type: SailTypes.VUE, // for now...not really hard to get everything up and going :D
-}
-
-const getViteConfig = (/* marinerConfig: MarinerConfig */): UserConfig => {
-  return {
-    build: {
-      modulePreload: {
-        polyfill: false,
-      },
-      manifest: true,
-      rollupOptions: {
-        input: FILES.entry,
-        preserveEntrySignatures: 'exports-only',
-        output: {
-          // format: 'esm',
-        },
+const getMarinerViteConfig = (): UserConfig => ({
+  build: {
+    modulePreload: {
+      polyfill: false,
+    },
+    manifest: true,
+    rollupOptions: {
+      input: FILES.navigator,
+      preserveEntrySignatures: 'exports-only',
+      output: {
+        // format: 'esm',
       },
     },
-  }
-}
+  },
+})
 
-export const defineMarinerConfig = (options: MarinerConfig, vite: UserConfig = {}) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sailSettings = defu(options, SAIL_DEFAULTS)
-
-  console.log(sailSettings)
-
+export const defineMarinerConfig = (marinerOptions: MarinerConfig) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return defineConfig(({ command, mode }) => {
-    return defu(vite, getViteConfig(), { mariner: sailSettings })
+    // console.log({ command, mode })
+    // Mariner default config goes first because we don't want to overwrite it
+    return defu(getMarinerViteConfig(), marinerOptions) as UserConfig
   })
 }

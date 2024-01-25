@@ -15,7 +15,7 @@ export const run = async () => {
   program.parse()
 }
 
-// Force exit child processes like servers
+// Force exit child processes like multiple servers
 process.on('SIGINT', () => {
   exit()
 })

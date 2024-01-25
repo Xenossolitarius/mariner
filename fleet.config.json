@@ -1,0 +1,6 @@
+{
+  "test": {
+    "serve": ["app2", "app1"],
+    "build": ["app2", "app1"]
+  }
+}
