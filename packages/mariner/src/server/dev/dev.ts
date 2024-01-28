@@ -19,6 +19,11 @@ const middlewarePlugin: () => Plugin = () => ({
   },
 })
 
+export const getServerUrl = (serverOps: ServerOptions) => ({
+  hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
+  port: serverOps.commands.port || DEV_SERVER_DEFAULTS.port,
+})
+
 export const createNavServer = async (
   connector: connect.Server,
   serverOps: ServerOptions,
@@ -27,9 +32,7 @@ export const createNavServer = async (
 ) => {
   const config = project.configFile!.config // will asume it exists
 
-  const hostname = serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname
-
-  const port = serverOps.commands.port || DEV_SERVER_DEFAULTS.port
+  const { port, hostname } = getServerUrl(serverOps)
 
   const base = `/${project.mariner}`
 
@@ -70,7 +73,9 @@ export const createDevServer = async (options: ServerOptions) => {
 
   app.use(koaConnect(redirect))
 
-  app.listen(3000, () => {
+  const { port, hostname } = getServerUrl(options)
+
+  app.listen(port, hostname, () => {
     console.log('Started')
   })
 }
