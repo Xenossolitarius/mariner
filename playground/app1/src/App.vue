@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+// DEFINED IN TYPES
+import {emitter} from 'virtual:mariner-root'
+// import {emitter as root} from 'virtual:mariner-lighthouse'
+console.log(emitter)
+// console.log(root)
+import rootEmmiter from 'virtual:root'
+console.log(rootEmmiter)
 </script>
 
 <template>

@@ -42,6 +42,65 @@ const virtualRoot: () => Plugin = () => {
   }
 }
 
+export function replaceImportsPlugin(): Plugin {
+  return {
+    name: 'replace-imports',
+    transform(code, id) {
+      console.log(id)
+      if (id.endsWith('.js') || id.endsWith('.jsx') || id.endsWith('vue')) {
+        // Replace imports here as needed
+        code = code.replace(/virtual:mariner-lighthouse/g, 'http:localhost:3000')
+      }
+      return {
+        code,
+        map: null,
+      }
+    },
+  }
+}
+
+function viteIgnoreStaticImport(base: string, importKeys: string[]): Plugin {
+  return {
+    name: 'vite-plugin-ignore-static-import',
+    enforce: 'pre',
+    // 1. insert to optimizeDeps.exclude to prevent pre-transform
+    config(config) {
+      config.optimizeDeps = {
+        ...(config.optimizeDeps ?? {}),
+        exclude: [...(config.optimizeDeps?.exclude ?? []), ...importKeys],
+      }
+    },
+    // 2. push a plugin to rewrite the 'vite:import-analysis' prefix
+    configResolved(resolvedConfig) {
+      const VALID_ID_PREFIX = `/@id/`
+      const reg = new RegExp(`${VALID_ID_PREFIX}(${importKeys.join('|')})`, 'g')
+      // @ts-expect-error - push actually exists
+      resolvedConfig.plugins.push({
+        name: 'vite-plugin-ignore-static-import-replace-idprefix',
+        transform: (code: string) => {
+          if (reg.test(code)) {
+            console.log(code)
+            //const result = code.replace(reg, (m, s1) => s1)
+
+            const result = code.replace(`${'app1'}${VALID_ID_PREFIX}virtual:root`, '')
+
+            console.log(result)
+
+            return result
+          }
+          return code
+        },
+      })
+    },
+    // 3. rewrite the id before 'vite:resolve' plugin transform to 'node_modules/...'
+    resolveId: (id) => {
+      if (importKeys.includes(id)) {
+        return { id, external: true }
+      }
+    },
+  }
+}
+
 export const getServerUrl = (serverOps: ServerOptions) => ({
   hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
   port: serverOps.commands.port || DEV_SERVER_DEFAULTS.port,
@@ -65,7 +124,12 @@ export const createNavServer = async (
     base,
     configFile: false,
     root: project.root,
-    plugins: [...(config.plugins || []), virtualRoot()],
+    plugins: [
+      ...(config.plugins || []),
+      virtualRoot(),
+      replaceImportsPlugin(),
+      viteIgnoreStaticImport(base, ['virtual:root']),
+    ],
     server: {
       middlewareMode: true,
       origin: `http://${hostname}:${port}`, // TODO: SSL

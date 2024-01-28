@@ -5,8 +5,8 @@ import { getDirname } from '../../utils/dirname'
 import { ServerOptions } from '..'
 import connect from 'connect'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const createClient = async (options: ServerOptions) => {
-  console.log(options)
   const clientPath = path.join(getDirname(import.meta.url), '../../client/client.ts')
 
   const result = await transform(await fs.readFile(clientPath), {
