@@ -7,5 +7,5 @@ global.__sail__ = {
   startTime: Date.now(),
   entry: fileURLToPath(import.meta.url),
 }
-console.log('works')
+
 run()

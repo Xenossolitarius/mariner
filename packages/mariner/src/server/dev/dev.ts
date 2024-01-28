@@ -1,4 +1,4 @@
-import { loadConfigFromFile, createServer as createViteServer, type Plugin, mergeConfig, resolveConfig } from 'vite'
+import { createServer as createViteServer, type Plugin } from 'vite'
 
 import { ServerOptions } from '../server'
 
@@ -7,7 +7,11 @@ import { DEV_SERVER_DEFAULTS } from '.'
 import Koa from 'koa'
 import koaConnect from 'koa-connect'
 import connect from 'connect'
+import koaCors from '@koa/cors'
+
 import { MarinerProject } from '../..'
+import { FILES } from '../../constants'
+import { createClientMiddleware } from './client'
 
 const middlewarePlugin: () => Plugin = () => ({
   name: 'testing-the-test-to-test',
@@ -45,13 +49,21 @@ export const createNavServer = async (
     plugins: [...(config.plugins || [])],
     server: {
       middlewareMode: true,
-      origin: `http://${hostname}:${port}`,
+      origin: `http://${hostname}:${port}`, // TODO: SSL
       hmr: { port: 6001 + index },
     },
   })
 
   connector.use(base, (req, res, next) => {
+    // remove base
     req.url = req.url?.replace(base, '')
+
+    console.log(`${base}, ${req.url}`)
+
+    if (req.url === '/') {
+      req.url += FILES.navigator
+    }
+
     server.middlewares(req, res, next)
   })
 
@@ -60,18 +72,22 @@ export const createNavServer = async (
 
 export const createDevServer = async (options: ServerOptions) => {
   const app = new Koa()
-  const redirect = connect()
+  const router = connect()
 
-  const navServers = await Promise.all(
-    options.projects.map((project, index) => createNavServer(redirect, options, project, index)),
+  app.use(koaCors())
+
+  await createClientMiddleware(options, router)
+
+  /* const navServers = */ await Promise.all(
+    options.projects.map((project, index) => createNavServer(router, options, project, index)),
   )
 
-  redirect.use((req, res, next) => {
+  router.use((req, res, next) => {
     console.log(req.url)
     next()
   })
 
-  app.use(koaConnect(redirect))
+  app.use(koaConnect(router))
 
   const { port, hostname } = getServerUrl(options)
 
