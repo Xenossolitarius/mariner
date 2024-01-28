@@ -23,6 +23,25 @@ const middlewarePlugin: () => Plugin = () => ({
   },
 })
 
+const virtualRoot: () => Plugin = () => {
+  const virtualModuleId = 'virtual:mariner-root'
+  const resolvedVirtualModuleId = '\0' + virtualModuleId
+
+  return {
+    name: 'mariner:virtual-root', // required, will show up in warnings and errors
+    resolveId(id) {
+      if (id === virtualModuleId) {
+        return resolvedVirtualModuleId
+      }
+    },
+    load(id) {
+      if (id === resolvedVirtualModuleId) {
+        return `export const emitter = "from virtual module"`
+      }
+    },
+  }
+}
+
 export const getServerUrl = (serverOps: ServerOptions) => ({
   hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
   port: serverOps.commands.port || DEV_SERVER_DEFAULTS.port,
@@ -46,7 +65,7 @@ export const createNavServer = async (
     base,
     configFile: false,
     root: project.root,
-    plugins: [...(config.plugins || [])],
+    plugins: [...(config.plugins || []), virtualRoot()],
     server: {
       middlewareMode: true,
       origin: `http://${hostname}:${port}`, // TODO: SSL
