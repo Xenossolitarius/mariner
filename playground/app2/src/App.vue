@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import DifferentName from './components/DifferentName.vue';
 import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <div class="bg-red-400">
-    <div>APP 2</div>
-    <img src="./assets/Mariner.png"></img>
+    <div>APP 2</div> 
+    <div>AJME111111</div>
+    <img src="./assets/Mariner.png"/>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>
@@ -13,6 +15,7 @@ import HelloWorld from './components/HelloWorld.vue'
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
   </div>
+  <DifferentName />
   <HelloWorld msg="Vite + Vue" />
 </template>
 

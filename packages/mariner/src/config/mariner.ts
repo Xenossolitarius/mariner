@@ -2,7 +2,7 @@ import { type UserConfig, defineConfig } from 'vite'
 import { defu } from 'defu'
 import { FILES } from '../constants'
 
-export type MarinerConfig = {
+export type MarinerUserConfig = {
   /**
    * Mariner project actual name, most of the naming is permissive because will be slugified
    */
@@ -30,7 +30,7 @@ const getMarinerViteConfig = (): UserConfig => ({
   },
 })
 
-export const defineMarinerConfig = (marinerOptions: MarinerConfig) => {
+export const defineMarinerConfig = (marinerOptions: MarinerUserConfig) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return defineConfig(({ command, mode }) => {
     // console.log({ command, mode })

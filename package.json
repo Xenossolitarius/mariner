@@ -25,7 +25,7 @@
     "prettier": "^3.2.4",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "v5.1.0-beta.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",

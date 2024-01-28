@@ -5,9 +5,8 @@ import path from 'node:path'
 
 import { type Path, glob } from 'glob'
 import { type ConfigEnv } from 'vite'
-import { MarinerInlineConfig, loadMarinerConfigFile, loadMarinerEnv, normalizeMode } from './utils'
+import { MarinerConfigFile, loadMarinerConfigFile, loadMarinerEnv, normalizeMode } from './utils'
 import type { MarinerEnvs, MarinerOptions } from './types'
-import { getDirname } from '../utils/dirname'
 import { FleetConfig, getFleetConfig } from './fleet'
 
 /**
@@ -20,7 +19,7 @@ export const getMarineConfigPaths = () =>
 export type MarinerProject = {
   base: Path
   root: string
-  config: MarinerInlineConfig | null
+  configFile: MarinerConfigFile | null
   mariner: string | null
   envs: MarinerEnvs
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +43,7 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
 
   const envs = loadMarinerEnv(configEnv.mode, root)
 
-  const [config, dirs, packageJson] = await Promise.all([configReadOp, dirsReadOp, packageReadOp])
+  const [configFile, dirs, packageJson] = await Promise.all([configReadOp, dirsReadOp, packageReadOp])
 
   const files = dirs.reduce(
     (acc, { name }) => {
@@ -70,9 +69,9 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
   return {
     base,
     root,
-    config,
+    configFile,
     // document this decision
-    mariner: slugify(config?.mariner || packageJson?.name) || MARINER_PROJ_DEFAULT_NAME,
+    mariner: slugify(configFile?.config.mariner || packageJson?.name) || MARINER_PROJ_DEFAULT_NAME,
     envs,
     packageJson,
     files,

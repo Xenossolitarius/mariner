@@ -1,3 +1,4 @@
+// import 'vite/modulepreload-polyfill'
 import { defineNavigator, createVueNavigator } from 'mariner/navigator'
 import { createApp } from 'vue'
 import './src/style.css'

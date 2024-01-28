@@ -3,12 +3,12 @@ import { setup } from './setup'
 import { select } from './select'
 import { ServerCommandOptions } from '../commands/shared/server'
 
-export const configure = async (options: ServerCommandOptions) => {
-  showMode(options.mode)
+export const configure = async (commands: ServerCommandOptions) => {
+  showMode(commands.mode)
 
-  const configs = await setup(options)
+  const setupData = await setup(commands)
 
-  const projects = await select(configs, options)
+  const projects = await select(setupData, commands)
 
-  return projects
+  return { setup: setupData, projects, commands }
 }

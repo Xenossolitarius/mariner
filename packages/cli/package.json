@@ -33,7 +33,6 @@
     "koa-proxies": "^0.12.4"
   },
   "devDependencies": {
-    "@types/yargs": "^17.0.32",
     "@types/inquirer": "9.0.7",
     "@commander-js/extra-typings": "^11.1.0"
   },
