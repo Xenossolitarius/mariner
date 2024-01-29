@@ -81,9 +81,11 @@ function viteIgnoreStaticImport(base: string, importKeys: string[]): Plugin {
           if (reg.test(code)) {
             console.log(code)
             //const result = code.replace(reg, (m, s1) => s1)
+            console.log('--------------------BEFORE---------------')
+            console.log(`${base}${VALID_ID_PREFIX}virtual:root`)
 
-            const result = code.replace(`${'app1'}${VALID_ID_PREFIX}virtual:root`, '')
-
+            const result = code.replace(new RegExp(`${base}${VALID_ID_PREFIX}virtual:root`, 'g'), '/')
+            console.log('--------------------AFTER---------------')
             console.log(result)
 
             return result

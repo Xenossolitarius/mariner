@@ -27,6 +27,16 @@ class EventEmitter<T> {
     this.events.get(event)!.push(handler)
   }
 
+  off(event: string, handler: EventHandler<T>): void {
+    const handlers = this.events.get(event)
+    if (handlers) {
+      this.events.set(
+        event,
+        handlers.filter((existingHandler) => existingHandler !== handler),
+      )
+    }
+  }
+
   emit(event: string, data: T): void {
     const handlers = this.events.get(event)
     if (handlers) {

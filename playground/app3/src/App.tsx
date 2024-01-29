@@ -1,11 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import rootEmmiter from 'virtual:root'
 
 function App() {
+
   const [count, setCount] = useState(0)
 
+  useEffect(() => {
+    console.log('what')
+    const update = () => {
+      
+      setCount((val) => val + 1) }
+    rootEmmiter.emitter.on('count', update)
+
+    return () => rootEmmiter.emitter.off('count', update)
+
+  }, [])
+
+
+
+const increase = () => {
+  setCount(count + 1)
+  rootEmmiter.emitter.emit('count')
+}
   return (
     <>
       <div>
@@ -18,7 +37,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={increase}>
           count is {count}
         </button>
         <p>
