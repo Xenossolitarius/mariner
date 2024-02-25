@@ -3,7 +3,7 @@ import HelloWorld from './components/HelloWorld.vue'
 // DEFINED IN TYPES
 import {emitter} from 'virtual:mariner-root'
 // import {emitter as root} from 'virtual:mariner-lighthouse'
-console.log(emitter)
+console.log('app1 some emmiter', emitter)
 // console.log(root)
 import rootEmmiter from 'virtual:root'
 console.log(rootEmmiter)

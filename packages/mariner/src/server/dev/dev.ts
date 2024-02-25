@@ -46,7 +46,6 @@ export function replaceImportsPlugin(): Plugin {
   return {
     name: 'replace-imports',
     transform(code, id) {
-      console.log(id)
       if (id.endsWith('.js') || id.endsWith('.jsx') || id.endsWith('vue')) {
         // Replace imports here as needed
         code = code.replace(/virtual:mariner-lighthouse/g, 'http:localhost:3000')
@@ -59,7 +58,7 @@ export function replaceImportsPlugin(): Plugin {
   }
 }
 
-function viteIgnoreStaticImport(base: string, importKeys: string[]): Plugin {
+function viteIgnoreStaticImport(base: string, replace: [orignal: string, target: string]): Plugin {
   return {
     name: 'vite-plugin-ignore-static-import',
     enforce: 'pre',
@@ -67,38 +66,42 @@ function viteIgnoreStaticImport(base: string, importKeys: string[]): Plugin {
     config(config) {
       config.optimizeDeps = {
         ...(config.optimizeDeps ?? {}),
-        exclude: [...(config.optimizeDeps?.exclude ?? []), ...importKeys],
+        exclude: [...(config.optimizeDeps?.exclude ?? []), ...replace[0]],
       }
     },
     // 2. push a plugin to rewrite the 'vite:import-analysis' prefix
     configResolved(resolvedConfig) {
       const VALID_ID_PREFIX = `/@id/`
-      const reg = new RegExp(`${VALID_ID_PREFIX}(${importKeys.join('|')})`, 'g')
+      const reg = new RegExp(`${VALID_ID_PREFIX}(${replace[0]})`, 'g')
       // @ts-expect-error - push actually exists
       resolvedConfig.plugins.push({
         name: 'vite-plugin-ignore-static-import-replace-idprefix',
         transform: (code: string) => {
-          if (reg.test(code)) {
-            console.log(code)
-            //const result = code.replace(reg, (m, s1) => s1)
-            console.log('--------------------BEFORE---------------')
-            console.log(`${base}${VALID_ID_PREFIX}virtual:root`)
-
-            const result = code.replace(new RegExp(`${base}${VALID_ID_PREFIX}virtual:root`, 'g'), '/')
-            console.log('--------------------AFTER---------------')
-            console.log(result)
-
-            return result
+          if (!reg.test(code)) {
+            return code
           }
-          return code
+
+          const result = code.replace(new RegExp(`${base}${VALID_ID_PREFIX}${replace[0]}`, 'g'), replace[1])
+
+          return result
         },
       })
     },
     // 3. rewrite the id before 'vite:resolve' plugin transform to 'node_modules/...'
     resolveId: (id) => {
-      if (importKeys.includes(id)) {
+      if (replace[0] === id) {
         return { id, external: true }
       }
+
+      return null
+    },
+    // 4. suppress HMR and general unresolved errors and warnings
+    load: (id: string) => {
+      if (replace[0] === id) {
+        return { code: 'export default {}' }
+      }
+
+      return null
     },
   }
 }
@@ -130,7 +133,7 @@ export const createNavServer = async (
       ...(config.plugins || []),
       virtualRoot(),
       replaceImportsPlugin(),
-      viteIgnoreStaticImport(base, ['virtual:root']),
+      viteIgnoreStaticImport(base, ['virtual:root', '/']),
     ],
     server: {
       middlewareMode: true,

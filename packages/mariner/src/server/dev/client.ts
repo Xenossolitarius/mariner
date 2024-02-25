@@ -23,7 +23,6 @@ export const createClientMiddleware = async (options: ServerOptions, connector: 
   const client = await createClient(options)
 
   connector.use((req, res, next) => {
-    console.log('global-client', req.url)
     if (req.url !== '/') return next()
     res.setHeader('Content-Type', 'application/javascript')
     res.statusCode = 200

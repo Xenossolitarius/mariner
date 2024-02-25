@@ -20,21 +20,21 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "commander": "^11.1.0",
-    "inquirer": "^9.2.12",
-    "chalk": "^5.3.0",
-    "ora": "^8.0.1",
-    "boxen": "^7.1.1",
-    "mariner": "workspace:*",
-    "koa": "^2.15.0",
-    "@types/koa": "^2.14.0",
-    "koa-connect": "^2.1.0",
     "@koa/router": "^12.0.1",
-    "koa-proxies": "^0.12.4"
+    "@types/koa": "^2.15.0",
+    "boxen": "^7.1.1",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.15",
+    "koa": "^2.15.0",
+    "koa-connect": "^2.1.0",
+    "koa-proxies": "^0.12.4",
+    "mariner": "workspace:*",
+    "ora": "^8.0.1"
   },
   "devDependencies": {
-    "@types/inquirer": "9.0.7",
-    "@commander-js/extra-typings": "^11.1.0"
+    "@commander-js/extra-typings": "^11.1.0",
+    "@types/inquirer": "9.0.7"
   },
   "keywords": [],
   "author": "",

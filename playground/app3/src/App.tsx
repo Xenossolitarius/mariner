@@ -9,10 +9,9 @@ function App() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    console.log('what')
     const update = () => {
       
-      setCount((val) => val + 1) }
+    setCount((val) => val + 1) }
     rootEmmiter.emitter.on('count', update)
 
     return () => rootEmmiter.emitter.off('count', update)
