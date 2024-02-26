@@ -1,19 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import rootEmmiter from 'virtual:root'
-
-rootEmmiter.emitter.on('count', () => count.value++)
-
-console.log(rootEmmiter.emitter)
-
 defineProps<{ msg: string }>()
 
 const count = ref(0)
 
 const increase = () => {
   count.value++
-  rootEmmiter.emitter.emit('count')
 }
 </script>
 

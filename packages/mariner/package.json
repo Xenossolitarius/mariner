@@ -30,6 +30,7 @@
   ],
   "scripts": {
     "start": "tsx ./src/cli/main.ts",
+    "start:build": "tsx ./src/cli/main.ts build",
     "dev": "nodemon --config nodemon.server.json",
     "build": "unbuild",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -49,7 +50,8 @@
     "koa": "^2.15.0",
     "koa-connect": "^2.1.0",
     "ora": "^8.0.1",
-    "vite": "^5.1.4"
+    "vite": "^5.1.4",
+    "vite-plugin-css-injected-by-js": "^3.4.0"
   },
   "devDependencies": {
     "@commander-js/extra-typings": "^11.1.0",

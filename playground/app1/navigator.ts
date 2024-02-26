@@ -1,7 +1,11 @@
-// import 'vite/modulepreload-polyfill'
-import { defineNavigator, createVueNavigator } from 'mariner/navigator'
+import { createVueNavigator } from 'mariner/navigator'
 import { createApp } from 'vue'
 import './src/style.css'
 import App from './src/App.vue'
+import { pinia } from 'navigator:shared'
 
-export default defineNavigator({ navigator: createVueNavigator(createApp(App)) })
+const app = createApp(App)
+
+app.use(pinia)
+
+export const navigator = createVueNavigator(createApp(App))

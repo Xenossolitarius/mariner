@@ -8,44 +8,28 @@
   </head>
   <body>
     <script type="module">
-      import RefreshRuntime from "http://localhost:3000/app3/@react-refresh"
+      import RefreshRuntime from 'http://localhost:3000/app3/@react-refresh'
       RefreshRuntime.injectIntoGlobalHook(window)
       window.$RefreshReg$ = () => {}
       window.$RefreshSig$ = () => (type) => type
       window.__vite_plugin_react_preamble_installed__ = true
-      </script>
+    </script>
     <div id="app2"></div>
 
     <script type="module">
-      console.log('what')
-      import module2 from 'http://localhost:3000/app2'
-      console.log(module2)
-        const navigator2 = module2.navigator
-        navigator2.mount('#app2')
+      import {navigator as navigator2} from 'http://localhost:3000/app2/navigator.js'
+      navigator2.mount('#app2')
     </script>
     <div id="app1"></div>
     <script type="module">
-      console.log('what')
-      import module1 from 'http://localhost:3000/app1'
-        const navigator1 = module1.navigator
-        navigator1.mount('#app1')
+      import {navigator as navigator1} from 'http://localhost:3000/app1/navigator.js'
+      navigator1.mount('#app1')
     </script>
 
-  <div id="app3"></div>
-  <script type="module">
-    console.log('what')
-    import module3 from 'http://localhost:3000/app3'
-      const navigator3 = module3.navigator
-      navigator3.mount('app3')
-  </script>
-
-
-
+    <div id="app3"></div>
     <script type="module">
-      console.log('client')
-      import client from 'http://localhost:3000'
-      console.log(client.url)
+      import {navigator as navigator3} from 'http://localhost:3000/app3/navigator.js'
+      navigator3.mount('app3')
     </script>
-
   </body>
 </html>

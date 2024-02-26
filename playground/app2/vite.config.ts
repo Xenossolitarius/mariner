@@ -1,7 +1,5 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import devManifest from 'vite-plugin-dev-manifest'
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 const examplePlugin = () => {
   let config
@@ -12,7 +10,7 @@ const examplePlugin = () => {
     configResolved(resolvedConfig) {
       // store the resolved config
       config = resolvedConfig
-      console.log(config.resolve.alias)
+      console.log(config)
     },
 
     // use stored config in other hooks
@@ -28,7 +26,7 @@ const examplePlugin = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), devManifest(), cssInjectedByJsPlugin(), splitVendorChunkPlugin(), examplePlugin()],
+  plugins: [vue(), examplePlugin()],
   //  base: '/app',
   build: {
     modulePreload: {
