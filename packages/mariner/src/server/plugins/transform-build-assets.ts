@@ -2,14 +2,17 @@ import type { Plugin } from 'vite'
 import fs from 'fs/promises'
 import crypto from 'crypto'
 import path from 'path'
+import { ServerOptions } from '..'
 
 const HASH_LENGTH = 8
 
 /**
  * Import and process .bin assets.
  */
-export default function transformBuildAssets(base: string): Plugin {
+export default function transformBuildAssets(base: string, options: ServerOptions): Plugin {
   let publicDirPath = ''
+
+  const rootBasePath = options.commands.rootBase ? `/${options.commands.rootBase}` : ''
 
   return {
     name: 'mariner-transform-build-assets',
@@ -43,7 +46,7 @@ export default function transformBuildAssets(base: string): Plugin {
         source: asset,
       })
 
-      return `export default import.meta.resolve("${base}/${fileName}");`
+      return `export default import.meta.resolve("${rootBasePath}${base}/${fileName}");`
     },
   }
 }

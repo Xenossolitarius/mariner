@@ -1,11 +1,12 @@
 import type { Plugin } from 'vite'
 import { ServerOptions } from '..'
-
-export const navigatorPrefix = 'navigator:'
+import { NAVIGATOR_MODULE_PREFIX } from '../../constants'
 
 export function resolveVirtualNavigators(base: string, options: ServerOptions): Plugin {
   const navigators = options.projects.map((proj) => proj.mariner)
-  const navigatorTags = navigators.map((nav) => `${navigatorPrefix}${nav}`)
+  const navigatorTags = navigators.map((nav) => `${NAVIGATOR_MODULE_PREFIX}${nav}`)
+
+  const rootBasePath = options.commands.rootBase ? `/${options.commands.rootBase}` : ''
 
   let isBuild = false
 
@@ -36,7 +37,7 @@ export function resolveVirtualNavigators(base: string, options: ServerOptions): 
           }
 
           const navigatorImportsRegex = new RegExp(
-            `(${base}${VALID_ID_PREFIX}${navigatorPrefix})(${navigators.join('|')})`,
+            `(${base}${VALID_ID_PREFIX}${NAVIGATOR_MODULE_PREFIX})(${navigators.join('|')})`,
             'g',
           )
 
@@ -46,7 +47,7 @@ export function resolveVirtualNavigators(base: string, options: ServerOptions): 
           while ((match = navigatorImportsRegex.exec(code)) !== null) {
             if (!match) break
             result = result.replace(
-              new RegExp(`${base}${VALID_ID_PREFIX}${navigatorPrefix}${match[2]}`, 'g'),
+              new RegExp(`${base}${VALID_ID_PREFIX}${NAVIGATOR_MODULE_PREFIX}${match[2]}`, 'g'),
               `/${match[2]}/navigator.js`,
             )
           }
@@ -63,7 +64,7 @@ export function resolveVirtualNavigators(base: string, options: ServerOptions): 
           return { id, external: true }
         }
 
-        return { id: `/${id.replace(navigatorPrefix, '')}/navigator.js`, external: true }
+        return { id: `${rootBasePath}/${id.replace(NAVIGATOR_MODULE_PREFIX, '')}/navigator.js`, external: true }
       }
 
       return null

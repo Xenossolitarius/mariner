@@ -23,6 +23,8 @@ export const STARTING_DEV_SERVER = chalk.cyan.bold('Starting dev server...')
 
 export const STARTING_BUILD = chalk.cyan.bold('Building...')
 
+export const GENERATING_TYPES = chalk.cyan.bold('Generating types...')
+
 export const SELECTED_MODE_MESSAGE = (mode?: string) => mode && chalk.cyan(`Selected mode: ${mode}`)
 
 export const FOUND_FLEET_CONFIG = chalk.green.bold('Found fleet config')

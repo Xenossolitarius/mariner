@@ -30,10 +30,14 @@ export const createNavServer = async (
 
   const base = `/${project.mariner}`
 
+  const rootBasePath = serverOps.commands.rootBase ? `/${serverOps.commands.rootBase}` : ''
+
+  const fullBase = `${rootBasePath}${base}`
+
   const server = await createViteServer({
     ...config,
     appType: 'custom',
-    base,
+    base: fullBase,
     mode: serverOps.commands.mode,
     envPrefix: MARINER_ENV_PREFIX,
     configFile: false,
@@ -46,11 +50,11 @@ export const createNavServer = async (
     },
   })
 
-  connector.use(base, (req, res, next) => {
+  connector.use(fullBase, (req, res, next) => {
     // remove base
-    req.url = req.url?.replace(base, '')
+    req.url = req.url?.replace(fullBase, '')
 
-    console.log(`${base}, ${req.url}`)
+    console.log(`${fullBase}, ${req.url}`)
 
     const entry = '/navigator.js'
 

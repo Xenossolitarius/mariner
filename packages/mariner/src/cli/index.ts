@@ -7,7 +7,7 @@ import { exit } from './steps/exit'
 
 export const run = async () => {
   // just to test the console
-  process.chdir('../..')
+  process.chdir('../../playground')
   console.log(process.cwd())
 
   start()

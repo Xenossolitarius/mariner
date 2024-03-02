@@ -3,6 +3,8 @@ export const FILES = {
   navigator: 'navigator.ts',
   docks: 'docks.ts',
   fleet: 'fleet.config.json',
+  typeDir: '.mariner',
+  typeFile: 'mariner.d.ts',
 }
 
 export const TEMPLATES = {
@@ -11,5 +13,7 @@ export const TEMPLATES = {
 }
 
 export const MARINER_ENV_PREFIX = 'MARINER_'
+
+export const NAVIGATOR_MODULE_PREFIX = 'navigator:'
 
 export const MARINER_PROJ_DEFAULT_NAME = 'mariner'

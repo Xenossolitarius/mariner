@@ -1,7 +1,6 @@
 import { type UserConfig, defineConfig, splitVendorChunkPlugin } from 'vite'
 import { defu } from 'defu'
 import { FILES } from '../constants'
-import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
 
 export type MarinerUserConfig = {
   /**
@@ -16,7 +15,7 @@ export type MarinerUserConfig = {
 } & UserConfig
 
 const getMarinerViteConfig = (): UserConfig => ({
-  plugins: [cssInjectedByJs(), splitVendorChunkPlugin()],
+  plugins: [splitVendorChunkPlugin()],
   build: {
     modulePreload: {
       polyfill: false,

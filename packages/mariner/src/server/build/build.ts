@@ -5,6 +5,7 @@ import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { FILES, MARINER_ENV_PREFIX } from '../../constants'
 import path from 'node:path'
 import transformBuildAssets from '../plugins/transform-build-assets'
+import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
 
 const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject) => {
   const config = project.configFile!.config // will asume it exists
@@ -13,7 +14,7 @@ const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject)
   const buildOptions = config.build!
 
   buildOptions.rollupOptions!.input = path.join(project.root, FILES.navigator)
-  buildOptions.outDir = path.join(process.cwd(), 'dist', project.mariner!)
+  buildOptions.outDir = path.join(process.cwd(), 'dist', serverOps.commands.rootBase || '', project.mariner!)
   buildOptions.emptyOutDir = true // delete build files
   // config.build!.assetsDir = '.'
   config.build!.rollupOptions!.output = {
@@ -29,7 +30,12 @@ const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject)
     envPrefix: MARINER_ENV_PREFIX,
     configFile: false,
     root: project.root,
-    plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps), transformBuildAssets(base)],
+    plugins: [
+      ...(config.plugins || []),
+      cssInjectedByJs(),
+      resolveVirtualNavigators(base, serverOps),
+      transformBuildAssets(base, serverOps),
+    ],
   })
 }
 
