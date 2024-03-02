@@ -2,7 +2,7 @@ import { build } from 'vite'
 import { ServerOptions } from '../server'
 import { MarinerProject } from '../..'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
-import { FILES } from '../../constants'
+import { FILES, MARINER_ENV_PREFIX } from '../../constants'
 import path from 'node:path'
 import transformBuildAssets from '../plugins/transform-build-assets'
 
@@ -25,6 +25,8 @@ const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject)
   await build({
     ...config,
     appType: 'custom',
+    mode: serverOps.commands.mode,
+    envPrefix: MARINER_ENV_PREFIX,
     configFile: false,
     root: project.root,
     plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps), transformBuildAssets(base)],

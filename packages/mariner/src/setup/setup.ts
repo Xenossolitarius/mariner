@@ -5,8 +5,8 @@ import path from 'node:path'
 
 import { type Path, glob } from 'glob'
 import { type ConfigEnv } from 'vite'
-import { MarinerConfigFile, loadMarinerConfigFile, loadMarinerEnv, normalizeMode } from './utils'
-import type { MarinerEnvs, MarinerOptions } from './types'
+import { MarinerConfigFile, loadMarinerConfigFile, normalizeMode } from './utils'
+import type { MarinerOptions } from './types'
 import { FleetConfig, getFleetConfig } from './fleet'
 
 /**
@@ -21,13 +21,11 @@ export type MarinerProject = {
   root: string
   configFile: MarinerConfigFile | null
   mariner: string | null
-  envs: MarinerEnvs
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   packageJson: any | null
   files: {
     navigator?: boolean
     docs?: boolean
-    lighthouse?: boolean
   }
   isValid: boolean
 }
@@ -41,8 +39,6 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
 
   const packageReadOp = getJSON<{ name?: string }>(path.resolve(root, 'package.json'))
 
-  const envs = loadMarinerEnv(configEnv.mode, root)
-
   const [configFile, dirs, packageJson] = await Promise.all([configReadOp, dirsReadOp, packageReadOp])
 
   const files = dirs.reduce(
@@ -54,10 +50,6 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
         case FILES.docks:
           acc.docs = true
           break
-        case FILES.lighthouse:
-          acc.lighthouse = true
-          break
-
         default:
           break
       }
@@ -72,7 +64,6 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
     configFile,
     // document this decision
     mariner: slugify(configFile?.config.mariner || packageJson?.name) || MARINER_PROJ_DEFAULT_NAME,
-    envs,
     packageJson,
     files,
     isValid: !!files.navigator, // for now this is the only check
@@ -87,23 +78,19 @@ export const getMarinerProjects = async (config: ConfigEnv): Promise<MarinerProj
 
 export type MarinerGlobal = {
   fleet: FleetConfig | null | false
-  envs: MarinerEnvs
 }
 
-export const getMarinerGlobals = async (mode: string) => {
+export const getMarinerGlobals = async () => {
   const fleet = await getFleetConfig()
 
-  // probably will cause some issues in the future
-  const envs = loadMarinerEnv(mode, process.cwd())
-
-  return { fleet, envs }
+  return { fleet }
 }
 
 export const getMarinerSetup = async (config: ConfigEnv): Promise<MarinerOptions> => {
   // normalize bcs this function can be used as standalone
   const mode = normalizeMode(config)
 
-  const global = await getMarinerGlobals(mode)
+  const global = await getMarinerGlobals()
 
   const projects = await getMarinerProjects({ command: config.command, mode })
 

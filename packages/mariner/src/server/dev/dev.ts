@@ -8,7 +8,7 @@ import connect from 'connect'
 import koaCors from '@koa/cors'
 
 import { MarinerProject } from '../..'
-import { FILES } from '../../constants'
+import { FILES, MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { startHTTPSServer } from './https'
 
@@ -34,6 +34,8 @@ export const createNavServer = async (
     ...config,
     appType: 'custom',
     base,
+    mode: serverOps.commands.mode,
+    envPrefix: MARINER_ENV_PREFIX,
     configFile: false,
     root: project.root,
     plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps)],

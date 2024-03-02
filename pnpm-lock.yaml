@@ -287,6 +287,18 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(@types/node@20.11.20)
 
+  playground/global-env:
+    devDependencies:
+      mariner:
+        specifier: workspace:*
+        version: link:../../packages/mariner
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+      vite:
+        specifier: ^5.1.4
+        version: 5.1.4(@types/node@20.11.20)
+
   playground/shared:
     dependencies:
       pinia:
