@@ -10,10 +10,12 @@ import koaCors from '@koa/cors'
 import { MarinerProject } from '../..'
 import { FILES } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
+import { startHTTPSServer } from './https'
 
 export const getServerUrl = (serverOps: ServerOptions) => ({
   hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
   port: serverOps.commands.port || DEV_SERVER_DEFAULTS.port,
+  secure: serverOps.commands.https,
 })
 
 export const createNavServer = async (
@@ -24,7 +26,7 @@ export const createNavServer = async (
 ) => {
   const config = project.configFile!.config // will asume it exists
 
-  const { port, hostname } = getServerUrl(serverOps)
+  const { port, hostname, secure } = getServerUrl(serverOps)
 
   const base = `/${project.mariner}`
 
@@ -37,8 +39,8 @@ export const createNavServer = async (
     plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps)],
     server: {
       middlewareMode: true,
-      origin: `http://${hostname}:${port}`, // TODO: SSL
-      hmr: { port: 6001 + index },
+      origin: `${secure ? 'https' : 'http'}://${hostname}:${port}`, // TODO: SSL
+      hmr: { port: 6001 + index, protocol: secure ? 'wss' : 'ws' },
     },
   })
 
@@ -75,9 +77,13 @@ export const createDevServer = async (options: ServerOptions) => {
 
   app.use(koaConnect(router))
 
-  const { port, hostname } = getServerUrl(options)
+  const { port, hostname, secure } = getServerUrl(options)
 
-  app.listen(port, hostname, () => {
-    console.log('Started dev')
-  })
+  if (secure) {
+    startHTTPSServer(app, { port, hostname, secure })
+  } else {
+    app.listen(port, hostname, () => {
+      console.log(`Started dev on: https://${hostname}:${port}`)
+    })
+  }
 }
