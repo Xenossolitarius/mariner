@@ -1,5 +1,5 @@
 # mariner
-POC
+Microfrontend framework
 ## Start
 ```
 1.
