@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "vue": "^3.4.27"
   },
   "devDependencies": {
     "mariner": "workspace:*",

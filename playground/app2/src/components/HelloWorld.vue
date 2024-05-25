@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useCounter } from 'navigator:shared'
 
 defineProps<{ msg: string }>()
 
@@ -8,6 +9,9 @@ const count = ref(0)
 const increase = () => {
   count.value++
 }
+
+const counterStore = useCounter()
+
 </script>
 
 <template>
@@ -19,6 +23,7 @@ const increase = () => {
       Edit
       <code>components/HelloWorld.vue</code> to test HMR
     </p>
+    <button type="button" @click="counterStore.update">Shared store count is {{ counterStore.counter }}</button>
   </div>
 
   <p>

@@ -38,8 +38,18 @@ declare module 'navigator:envs' {
 declare module 'navigator:shared' {
 
   import { Pinia } from 'pinia';
+  import { StoreDefinition } from 'pinia';
   
   export const pinia: Pinia;
+  
+  export const useCounter: StoreDefinition<"counter", {
+      counter: number;
+  }, {}, {
+      update(): void;
+  }>;
+  
+  
+  export * from "pinia";
   
   export { }
   

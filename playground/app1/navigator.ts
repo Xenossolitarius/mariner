@@ -10,4 +10,4 @@ const app = createApp(App)
 
 app.use(pinia)
 
-export const navigator = createVueNavigator(createApp(App))
+export const navigator = createVueNavigator(app)

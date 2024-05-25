@@ -27,20 +27,16 @@ export function resolveVirtualNavigators(base: string, options: ServerOptions): 
     // 2. push a plugin to rewrite the 'vite:import-analysis' prefix
     configResolved(resolvedConfig) {
       const VALID_ID_PREFIX = `/@id/`
-      const reg = new RegExp(`${VALID_ID_PREFIX}(${navigatorTags.join('|')})`, 'g')
+
+      const navigatorImportsRegex = new RegExp(
+        `(${base}${VALID_ID_PREFIX}${NAVIGATOR_MODULE_PREFIX})(${navigators.join('|')})`,
+        'g',
+      )
+
       // @ts-expect-error - push actually exists
       resolvedConfig.plugins.push({
         name: 'vite-plugin-resolve-virtual-navigators-replace-idprefix',
         transform: (code: string) => {
-          if (!reg.test(code)) {
-            return code
-          }
-
-          const navigatorImportsRegex = new RegExp(
-            `(${base}${VALID_ID_PREFIX}${NAVIGATOR_MODULE_PREFIX})(${navigators.join('|')})`,
-            'g',
-          )
-
           let match: RegExpExecArray | null = null
           let result = code
 
