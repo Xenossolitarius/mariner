@@ -15,7 +15,7 @@ export const SELECT_MARINERS = 'Select mariners'
 export const EXITING = chalk.cyan('Mariner exiting...')
 
 export const INVALID_NAVIGATOR_REASON = (projectData: MarinerProject) =>
-  !projectData.files.navigator ? `Missing navigator` : !projectData.packageJson ? 'Missing package.json' : 'Unknown'
+  !projectData.navigator ? `Missing navigator` : !projectData.packageJson ? 'Missing package.json' : 'Unknown'
 
 export const MARINER_DESCRIPTION = 'Sail - Mariner CLI tool for building Micro Frontends'
 

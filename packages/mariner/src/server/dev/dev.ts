@@ -8,7 +8,7 @@ import connect from 'connect'
 import koaCors from '@koa/cors'
 
 import { MarinerProject } from '../..'
-import { FILES, MARINER_ENV_PREFIX } from '../../constants'
+import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { startHTTPSServer } from './https'
 
@@ -33,6 +33,8 @@ export const createNavServer = async (
   const rootBasePath = serverOps.commands.rootBase ? `/${serverOps.commands.rootBase}` : ''
 
   const fullBase = `${rootBasePath}${base}`
+
+  config.build!.rollupOptions!.input = project.navigator
 
   const server = await createViteServer({
     ...config,
@@ -59,7 +61,7 @@ export const createNavServer = async (
     const entry = '/navigator.js'
 
     if (req.url === entry) {
-      req.url = `/${FILES.navigator}`
+      req.url = `/${project.navigator}`
     }
 
     server.middlewares(req, res, next)

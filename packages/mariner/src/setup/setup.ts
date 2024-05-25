@@ -23,10 +23,8 @@ export type MarinerProject = {
   mariner: string | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   packageJson: any | null
-  files: {
-    navigator?: boolean
-    docs?: boolean
-  }
+  navigator?: string
+  isJs: boolean
   isValid: boolean
 }
 
@@ -41,22 +39,17 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
 
   const [configFile, dirs, packageJson] = await Promise.all([configReadOp, dirsReadOp, packageReadOp])
 
-  const files = dirs.reduce(
-    (acc, { name }) => {
-      switch (name) {
-        case FILES.navigator:
-          acc.navigator = true
-          break
-        case FILES.docks:
-          acc.docs = true
-          break
-        default:
-          break
-      }
-      return acc
-    },
-    <MarinerProject['files']>{},
-  )
+  let navigator: string | undefined
+  let isJs = false
+
+  dirs.forEach(({ name }) => {
+    if (name === `${FILES.navigator}.ts`) {
+      navigator = name
+    } else if (name === `${FILES.navigator}.js`) {
+      navigator = name
+      isJs = true
+    }
+  })
 
   return {
     base,
@@ -65,8 +58,9 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
     // document this decision
     mariner: slugify(configFile?.config.mariner || packageJson?.name) || MARINER_PROJ_DEFAULT_NAME,
     packageJson,
-    files,
-    isValid: !!files.navigator, // for now this is the only check
+    navigator,
+    isJs,
+    isValid: !!navigator, // for now this is the only check
   }
 }
 

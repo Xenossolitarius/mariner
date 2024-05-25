@@ -3,6 +3,7 @@ import { createApp } from 'vue'
 import './src/style.css'
 import App from './src/App.vue'
 import { pinia } from 'navigator:shared'
+import 'navigator:js-test'
 
 console.log('SOMETHING', pinia)
 

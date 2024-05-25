@@ -1,7 +1,6 @@
 export const FILES = {
   config: 'mariner.config.ts',
-  navigator: 'navigator.ts',
-  docks: 'docks.ts',
+  navigator: 'navigator',
   fleet: 'fleet.config.json',
   typeDir: '.mariner',
   typeFile: 'mariner.d.ts',

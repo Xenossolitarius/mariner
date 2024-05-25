@@ -14,7 +14,7 @@ const generateTypes = async (serverOps: ServerOptions, project: MarinerProject) 
   const buildConfig = {
     outDir: path.join(process.cwd(), FILES.typeDir, project.mariner!),
     lib: {
-      entry: path.join(project.root, FILES.navigator),
+      entry: path.join(project.root, project.navigator!),
       name: `${NAVIGATOR_MODULE_PREFIX}${project.mariner}`,
       formats: ['es' as const],
     },
@@ -41,6 +41,6 @@ const generateTypes = async (serverOps: ServerOptions, project: MarinerProject) 
 }
 
 export const createTypeGeneratorServer = async (options: ServerOptions) => {
-  await Promise.all(options.projects.map((project) => generateTypes(options, project)))
+  await Promise.all(options.projects.map((project) => !project.isJs && generateTypes(options, project)))
   await generateMarinerTypeFile()
 }

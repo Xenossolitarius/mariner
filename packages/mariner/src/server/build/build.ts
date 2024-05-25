@@ -2,7 +2,7 @@ import { build } from 'vite'
 import { ServerOptions } from '../server'
 import { MarinerProject } from '../..'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
-import { FILES, MARINER_ENV_PREFIX } from '../../constants'
+import { MARINER_ENV_PREFIX } from '../../constants'
 import path from 'node:path'
 import transformBuildAssets from '../plugins/transform-build-assets'
 import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
@@ -13,7 +13,7 @@ const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject)
 
   const buildOptions = config.build!
 
-  buildOptions.rollupOptions!.input = path.join(project.root, FILES.navigator)
+  buildOptions.rollupOptions!.input = path.join(project.root, project.navigator!)
   buildOptions.outDir = path.join(process.cwd(), 'dist', serverOps.commands.rootBase || '', project.mariner!)
   buildOptions.emptyOutDir = true // delete build files
   // config.build!.assetsDir = '.'
