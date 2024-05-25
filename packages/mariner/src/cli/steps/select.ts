@@ -39,7 +39,7 @@ export const select = async ({ projects, global }: MarinerOptions, options: Serv
             message: SELECT_FLEET,
             name: 'fleet',
             choices: Object.entries(global.fleet).map(([name, projects]) => ({
-              name: `${name} - ${projects[options.command].join(', ')}`,
+              name: `${name} - ${projects.join(', ')}`,
               value: name,
             })),
           },
@@ -52,8 +52,7 @@ export const select = async ({ projects, global }: MarinerOptions, options: Serv
       }
 
       return projects.filter(
-        (project) =>
-          project.mariner && global.fleet && global.fleet?.[fleet][options.command].includes(project.mariner),
+        (project) => project.mariner && global.fleet && global.fleet?.[fleet].includes(project.mariner),
       )
     }
   }
