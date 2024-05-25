@@ -7,6 +7,13 @@
     <title>Vite + Vue + TS</title>
   </head>
   <body>
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+      }
+    </script>
     <script type="module">
       import RefreshRuntime from 'http://localhost:3000/app3/@react-refresh'
       RefreshRuntime.injectIntoGlobalHook(window)

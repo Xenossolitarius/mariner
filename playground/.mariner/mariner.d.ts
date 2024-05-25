@@ -43,9 +43,9 @@ declare module 'navigator:shared' {
   export const pinia: Pinia;
   
   export const useCounter: StoreDefinition<"counter", {
-      counter: number;
+  counter: number;
   }, {}, {
-      update(): void;
+  update(): void;
   }>;
   
   
