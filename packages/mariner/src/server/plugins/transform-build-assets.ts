@@ -27,7 +27,7 @@ export const transformBuildAssets = (base: string, options: ServerOptions): Plug
 
       // handle public
       if (id.includes('vite:asset:public')) {
-        console.log(path.sep, id)
+        // console.log(path.sep, id)
         id = id.replace('vite:asset:public' + path.sep, '')
         id = id.replace('\0', '') // remove virtual path
         id = path.join(publicDirPath, id)

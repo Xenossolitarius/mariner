@@ -29,9 +29,8 @@ class WorkerPool {
     this.availableWorkers = []
 
     const workerNum = size ?? Math.min(Math.floor(os.cpus().length / 2), 4) // default half cores or at least 4
-    console.log(workerNum)
 
-    console.log(join(scriptPath(), path))
+    console.log(`Working with ${workerNum} threads`)
 
     for (let i = 0; i < workerNum; i++) {
       const worker = new Worker(join(scriptPath(), path))

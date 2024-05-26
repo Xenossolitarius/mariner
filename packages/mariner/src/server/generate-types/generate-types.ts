@@ -13,7 +13,6 @@ export const generateTypes = async (serverOps: ServerOptions, project: MarinerPr
   if (!config) return
   const base = `/${project.mariner}`
 
-  console.log(config)
   const buildConfig = {
     outDir: path.join(process.cwd(), FILES.typeDir, project.mariner!),
     lib: {

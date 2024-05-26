@@ -2,6 +2,13 @@
   "name": "mariner",
   "version": "1.0.0",
   "description": "Mariner Framework",
+  "author": "Ivan Pešić",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xenossolitarius/mariner.git"
+  },
+  "keywords": ["microfrontend", "federation", "mariner"],
+  "license": "MIT",
   "type": "module",
   "types": "./dist/index.d.ts",
   "bin": {
