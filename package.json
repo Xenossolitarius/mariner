@@ -31,6 +31,6 @@
     "unbuild": "^2.0.0"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Ivan Pešić",
+  "license": "MIT"
 }

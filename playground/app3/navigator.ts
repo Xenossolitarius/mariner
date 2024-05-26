@@ -1,4 +1,4 @@
-import { createReactNavigator } from 'mariner-io/navigator';
+import { createReactNavigator } from 'mariner-fe/navigator';
 import { NavigatorApp } from './src/main-navigator'
 import ReactDOM from 'react-dom/client'
 

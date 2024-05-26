@@ -53,7 +53,7 @@ Mariner makes microfrontends work like SPA meaning it's full client side renderi
 To start with Mariner just install the package with any of the package managers locally or globally.
 
 ```bash
-npm install mariner-io
+npm install mariner-fe
 ```
 
 Open up any vite project or scaffold a new one, Mariner is framework agnostic. As long as it can be built as es module its supported.
@@ -68,7 +68,7 @@ only mandatory field is `mariner` where you need to give a name to the microfron
 
 ```ts
 /* mariner.config.ts */
-import { defineMarinerConfig } from 'mariner-io'
+import { defineMarinerConfig } from 'mariner-fe'
 import vue from '@vitejs/plugin-vue'
 
 export default defineMarinerConfig({
@@ -120,7 +120,7 @@ Mariner is framework agnostic although it does bundle a Vue and React helpers if
 
 ```ts
 /* navigator.ts */
-import { createVueNavigator } from 'mariner-io/navigator'
+import { createVueNavigator } from 'mariner-fe/navigator'
 import { createApp } from 'vue'
 import './src/style.css'
 import App from './src/App.vue'
@@ -135,7 +135,7 @@ export const navigator = createVueNavigator(app)
 
 ```ts
 /* navigator.ts */
-import { createReactNavigator } from 'mariner-io/navigator';
+import { createReactNavigator } from 'mariner-fe/navigator';
 import { NavigatorApp } from './src/main-navigator'
 import ReactDOM from 'react-dom/client'
 

@@ -1,4 +1,4 @@
-import { defineMarinerConfig } from 'mariner-io'
+import { defineMarinerConfig } from 'mariner-fe'
 
 export default defineMarinerConfig({
   mariner: 'shared',

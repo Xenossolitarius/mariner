@@ -15,4 +15,4 @@ export const MARINER_ENV_PREFIX = 'MARINER_'
 
 export const NAVIGATOR_MODULE_PREFIX = 'navigator:'
 
-export const MARINER_PROJ_DEFAULT_NAME = 'mariner-io'
+export const MARINER_PROJ_DEFAULT_NAME = 'mariner-fe'
