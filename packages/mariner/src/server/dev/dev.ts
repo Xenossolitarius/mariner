@@ -56,7 +56,7 @@ export const createNavServer = async (
     // remove base
     req.url = req.url?.replace(fullBase, '')
 
-    console.log(`${fullBase}, ${req.url}`)
+    serverOps.commands.debug && console.log(`${fullBase}, ${req.url}`)
 
     const entry = '/navigator.js'
 
@@ -78,10 +78,11 @@ export const createDevServer = async (options: ServerOptions) => {
 
   await Promise.all(options.projects.map((project, index) => createNavServer(router, options, project, index)))
 
-  router.use((req, res, next) => {
-    console.log(req.url)
-    next()
-  })
+  options.commands.debug &&
+    router.use((req, res, next) => {
+      console.log(req.url)
+      next()
+    })
 
   app.use(koaConnect(router))
 
@@ -91,7 +92,7 @@ export const createDevServer = async (options: ServerOptions) => {
     startHTTPSServer(app, { port, hostname, secure })
   } else {
     app.listen(port, hostname, () => {
-      console.log(`Started dev on: https://${hostname}:${port}`)
+      console.log(`Started dev on: http://${hostname}:${port}`)
     })
   }
 }

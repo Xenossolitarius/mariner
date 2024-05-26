@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
 import fs from 'fs/promises'
 import crypto from 'crypto'
-import path from 'path'
+import path from 'node:path'
 import { ServerOptions } from '..'
 
 const HASH_LENGTH = 8

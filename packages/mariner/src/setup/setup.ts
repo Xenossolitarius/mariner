@@ -17,7 +17,6 @@ export const getMarineConfigPaths = () =>
   glob(`**/${FILES.config}`, { ignore: ['node_modules/**', 'dist'], withFileTypes: true })
 
 export type MarinerProject = {
-  base: Path
   root: string
   configFile: MarinerConfigFile | null
   mariner: string | null
@@ -52,7 +51,6 @@ const getMarineProject = async (base: Path, configEnv: ConfigEnv): Promise<Marin
   })
 
   return {
-    base,
     root,
     configFile,
     // document this decision

@@ -1,16 +1,19 @@
 import { build } from 'vite'
 import { ServerOptions } from '../server'
-import { MarinerProject } from '../..'
+import { MarinerProject, loadMarinerConfigFile } from '../..'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { FILES, MARINER_ENV_PREFIX, NAVIGATOR_MODULE_PREFIX } from '../../constants'
 import path from 'node:path'
 import dts from 'vite-plugin-dts'
 import { generateMarinerTypeFile } from './combine'
+import WorkerPool from '../worker-pool'
 
-const generateTypes = async (serverOps: ServerOptions, project: MarinerProject) => {
-  const config = project.configFile!.config // will asume it exists
+export const generateTypes = async (serverOps: ServerOptions, project: MarinerProject) => {
+  const config = (await loadMarinerConfigFile(serverOps.commands, project.root))?.config
+  if (!config) return
   const base = `/${project.mariner}`
 
+  console.log(config)
   const buildConfig = {
     outDir: path.join(process.cwd(), FILES.typeDir, project.mariner!),
     lib: {
@@ -41,6 +44,8 @@ const generateTypes = async (serverOps: ServerOptions, project: MarinerProject) 
 }
 
 export const createTypeGeneratorServer = async (options: ServerOptions) => {
-  await Promise.all(options.projects.map((project) => !project.isJs && generateTypes(options, project)))
+  const pool = new WorkerPool('/dist/server/generate-types/worker.mjs', options.commands.threads)
+  await Promise.all(options.projects.map((project) => !project.isJs && pool.run({ options, project })))
+  pool.close()
   await generateMarinerTypeFile()
 }

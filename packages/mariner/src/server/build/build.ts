@@ -1,14 +1,17 @@
 import { build } from 'vite'
 import { ServerOptions } from '../server'
-import { MarinerProject } from '../..'
+import { MarinerProject, loadMarinerConfigFile } from '../..'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import path from 'node:path'
 import transformBuildAssets from '../plugins/transform-build-assets'
 import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
+import WorkerPool from '../worker-pool'
 
-const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject) => {
-  const config = project.configFile!.config // will asume it exists
+export const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject) => {
+  const config = (await loadMarinerConfigFile(serverOps.commands, project.root))?.config
+  if (!config) return
+
   const base = `/${project.mariner}`
 
   const buildOptions = config.build!
@@ -39,6 +42,15 @@ const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject)
   })
 }
 
+// export const createBuildServer = async (options: ServerOptions) => {
+//   const start = performance.now()
+//   await Promise.all(options.projects.map((project) => buildNavigator(options, project)),
+//   )
+//   console.log('FUCKING FINISHED', performance.now() - start)
+// }
+
 export const createBuildServer = async (options: ServerOptions) => {
-  await Promise.all(options.projects.map((project) => buildNavigator(options, project)))
+  const pool = new WorkerPool('/dist/server/build/worker.mjs', options.commands.threads)
+  await Promise.all(options.projects.map((project) => pool.run({ options, project })))
+  pool.close()
 }
