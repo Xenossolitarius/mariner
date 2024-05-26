@@ -8,6 +8,7 @@ export default defineBuildConfig([
       { input: 'src/index' },
       //navigator
       { input: 'src/navigator/index' },
+      // workers
       { input: 'src/server/build/worker' },
       { input: 'src/server/generate-types/worker' },
     ],

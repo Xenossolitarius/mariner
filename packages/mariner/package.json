@@ -73,5 +73,9 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "vue": "^3.4.27"
+  },
+  "peerDependencies": {
+    "vite": "^5.2.11",
+    "defu": "^6.1.4"
   }
 }
