@@ -27,10 +27,10 @@ It provides a number of ways it can be used while maintaining performance, scale
 
 ## <a name="how-it-works">⛵ How it works</a>
 
-Mariner is a framework built on top of Vite but unlike module federation it doesn't mandate the developer to opt into a framework per say. Everything which works with Vite has a pretty good chance to
-work with Mariner microfrontend. Mariner is framework agnostic. 
+Mariner is a framework built on top of Vite but unlike module federation it doesn't mandate the developer to opt into a framework per say. Everything which works with Vite has a pretty good chance to work with Mariner microfrontend. Mariner is framework agnostic. 
 Microfrontend is whatever you decide microfrontend is.
-What it does is force modern technological directions: 
+
+What it does is force modern technological conventions: 
 
 ### Monorepo
 
@@ -56,7 +56,7 @@ To start with Mariner just install the package with any of the package managers 
 npm install mariner-fe
 ```
 
-Open up any vite project or scaffold a new one, Mariner is framework agnostic. As long as it can be built as es module its supported.
+Open up any vite project or scaffold a new one, Mariner is framework agnostic. As long as it can be built as ES module its supported.
 
 Create two files in the root project directory:
 
@@ -74,11 +74,6 @@ import vue from '@vitejs/plugin-vue'
 export default defineMarinerConfig({
   mariner: 'app1',
   plugins: [vue()],
-  build: {
-    rollupOptions: {
-      external: ['vue'],
-    },
-  },
 })
 
 ```
@@ -101,8 +96,8 @@ After that you can import it into your DOM any way you see fit (keep in mind of 
 
 ```html
 <script type="module">
-  import {navigator} from 'http://localhost:3000/app1/navigator.js'
-  navigator.mount('#app1')
+  import { app } from 'http://localhost:3000/app1/navigator.js'
+  app.mount('#app1')
 </script>
 ```
 
@@ -114,7 +109,7 @@ or mount it from inside the navigator
 
 ## <a name="framework-development">💻 Framework Development</a>
 
-Mariner is framework agnostic although it does bundle a Vue and React helpers if you need a XSS safe way to expose your micro apps to the runtime environment. Always be aware when exposing an ESModule especially if the DOM is not fully in your control (3rd party integration).
+Mariner is framework agnostic although it does bundle a Vue and React helpers if you need a XSS safe way to expose your micro apps to the runtime environment. Always be aware when exposing an ES module especially if the DOM is not fully in your control (3rd party integration).
 
 **Vue**
 
@@ -145,14 +140,35 @@ export const navigator = createReactNavigator(ReactDOM.createRoot, NavigatorApp(
 
 ## <a name="combine-microfrontends">🧩 Combine microfrontends</a>
 
-Mariner exposes a mechanism of combining microfrontends through module aliasing in build time
+Mariner exposes a mechanism of combining microfrontends through module aliasing in build time.
 The mechanism is quite simple:
 If the name of the microfrontend is for example `app1` then it is going to be prefixed with `navigator:` resulting in an `navigator:app1` import that gets transformed into `/app1/navigator.js` in dev and build. You can add rootBase if you need to shift the hosting to for example  `/microfe`.
 You can do pretty much everything you can do in your code editor. Beware of extensive granularity because it will make a difference in your network speed and unintentional bundle size.
 
+```vue
+<template>
+  <button type="button" @click="counterStore.update">
+    Shared store count is {{ counterStore.counter }}
+  </button>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useCounter } from 'navigator:shared'
+
+const counterStore = useCounter()
+</script>
+
+<style scoped>
+button {
+  color: #888;
+}
+</style>
+```
+
 ## <a name="fleets">🚢 Fleets</a>
 
-Because the microfrontend workflow can extend to 1k+ developers it can encompass an infinite number of microfrontends. Bcs this architecture is hard to scale, more than dev then build mariner offers an extensive CLI journey for selecting which microfrontends to run. 
+Because the microfrontend workflow can extend to 1k+ developers it can encompass an infinite number of microfrontends. Because this architecture is hard to scale, more dev than build mariner offers an extensive CLI journey for selecting which microfrontends to run. 
 
 Also you can predefine a subset of microfrontends to run together via `fleet.config.json`
 
@@ -205,11 +221,11 @@ Hmr is available for most Vite supported frameworks although it requires a bit o
 ## <a name="build">🔧 Build </a>
 
 Build and type generation are done by node workers meaning they run in parallel. Mariner generally tries to decouple 
-dependencies, runtime, build time as much as possible in dev and build. Although the dev server is inefficient to spawn as different processes the build and type generation benefit from parallelization. There are no golden number of threads so the CLI adds the `--threads` flag which enables you to fine tune for your fleet and CI/CD.
+dependencies, runtime, build time as much as possible in dev and build. Although the dev server is inefficient to spawn as different processes the build and type generation benefit from parallelization. There is no golden number of threads so the CLI adds the `--threads` flag which enables you to fine tune performance for your fleet and CI/CD.
 
 ## <a name="type-generation">🧰 Type generation </a>
 
-Mariner takes **typescript** as a first class citizen and exposes a command `generate` which will as long as the navigator is in typescript generate 
+Mariner takes **typescript** as a first class citizen and exposes a command `generate` which will ,as long as the navigator is in typescript, generate 
 a folder from the microfrontend selection named `.mariner` which will contain all the exposed types.
 
 From there you can opt-in into using those types by importing them to your local `tsconfig` file
