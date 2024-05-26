@@ -53,7 +53,7 @@ Mariner makes microfrontends work like SPA meaning it's full client side renderi
 To start with Mariner just install the package with any of the package managers locally or globally.
 
 ```bash
-npm install mariner
+npm install mariner-io
 ```
 
 Open up any vite project or scaffold a new one, Mariner is framework agnostic. As long as it can be built as es module its supported.
