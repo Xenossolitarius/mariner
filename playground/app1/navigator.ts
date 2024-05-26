@@ -1,4 +1,4 @@
-import { createVueNavigator } from 'mariner/navigator'
+import { createVueNavigator } from 'mariner-io/navigator'
 import { createApp } from 'vue'
 import './src/style.css'
 import App from './src/App.vue'

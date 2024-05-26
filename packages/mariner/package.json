@@ -1,5 +1,5 @@
 {
-  "name": "mariner",
+  "name": "mariner-io",
   "version": "1.0.0",
   "description": "Mariner Framework",
   "author": "Ivan Pešić",
@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/Xenossolitarius/mariner.git"
   },
-  "keywords": ["microfrontend", "federation", "mariner"],
+  "keywords": ["microfrontend", "federation", "mariner-io"],
   "license": "MIT",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -50,7 +50,7 @@
     "start": "tsx ./src/cli/main.ts",
     "start:build": "tsx ./src/cli/main.ts build",
     "start:generate": "tsx ./src/cli/main.ts generate",
-    "mariner": "mariner",
+    "mariner-io": "mariner-io",
     "dev": "nodemon --config nodemon.server.json",
     "build": "unbuild",
     "test": "echo \"Error: no test specified\" && exit 1"

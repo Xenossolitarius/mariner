@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  mariner: workspace:*
+  mariner-fe: workspace:*
 
 importers:
 
@@ -87,6 +87,9 @@ importers:
       connect:
         specifier: ^3.7.0
         version: 3.7.0
+      defu:
+        specifier: ^6.1.4
+        version: 6.1.4
       esbuild:
         specifier: ^0.20.2
         version: 0.20.2
@@ -145,7 +148,7 @@ importers:
 
   playground:
     dependencies:
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../packages/mariner
       pinia:
@@ -161,7 +164,7 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^4.6.2
         version: 4.6.2(vite@5.2.11)(vue@3.4.27)
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../../packages/mariner
       typescript:
@@ -186,7 +189,7 @@ importers:
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../../packages/mariner
       postcss:
@@ -207,7 +210,7 @@ importers:
 
   playground/app3:
     dependencies:
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../../packages/mariner
       react:
@@ -250,7 +253,7 @@ importers:
 
   playground/global-env:
     devDependencies:
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../../packages/mariner
       typescript:
@@ -262,7 +265,7 @@ importers:
 
   playground/js-test:
     devDependencies:
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../../packages/mariner
       typescript:
@@ -281,7 +284,7 @@ importers:
         specifier: ^3.4.27
         version: 3.4.27(typescript@5.4.5)
     devDependencies:
-      mariner:
+      mariner-io:
         specifier: workspace:*
         version: link:../../packages/mariner
       typescript:

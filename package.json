@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "resolutions": {
-    "mariner": "workspace:*"
+    "mariner-fe": "workspace:*"
   },
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",

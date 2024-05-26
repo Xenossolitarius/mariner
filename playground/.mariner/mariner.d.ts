@@ -1,6 +1,6 @@
 declare module 'navigator:app1' {
 
-  import { Navigator as Navigator_2 } from 'mariner/navigator';
+  import { Navigator as Navigator_2 } from 'mariner-io/navigator';
   
   const navigator_2: Navigator_2;
   export { navigator_2 as navigator }
@@ -10,7 +10,7 @@ declare module 'navigator:app1' {
 }
 declare module 'navigator:app2' {
 
-  import { Navigator as Navigator_2 } from 'mariner/navigator';
+  import { Navigator as Navigator_2 } from 'mariner-io/navigator';
   
   const navigator_2: Navigator_2;
   export { navigator_2 as navigator }
@@ -20,7 +20,7 @@ declare module 'navigator:app2' {
 }
 declare module 'navigator:app3' {
 
-  import { Navigator as Navigator_2 } from 'mariner/navigator';
+  import { Navigator as Navigator_2 } from 'mariner-io/navigator';
   
   const navigator_2: Navigator_2;
   export { navigator_2 as navigator }

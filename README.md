@@ -68,7 +68,7 @@ only mandatory field is `mariner` where you need to give a name to the microfron
 
 ```ts
 /* mariner.config.ts */
-import { defineMarinerConfig } from 'mariner'
+import { defineMarinerConfig } from 'mariner-io'
 import vue from '@vitejs/plugin-vue'
 
 export default defineMarinerConfig({
@@ -120,7 +120,7 @@ Mariner is framework agnostic although it does bundle a Vue and React helpers if
 
 ```ts
 /* navigator.ts */
-import { createVueNavigator } from 'mariner/navigator'
+import { createVueNavigator } from 'mariner-io/navigator'
 import { createApp } from 'vue'
 import './src/style.css'
 import App from './src/App.vue'
@@ -135,7 +135,7 @@ export const navigator = createVueNavigator(app)
 
 ```ts
 /* navigator.ts */
-import { createReactNavigator } from 'mariner/navigator';
+import { createReactNavigator } from 'mariner-io/navigator';
 import { NavigatorApp } from './src/main-navigator'
 import ReactDOM from 'react-dom/client'
 
