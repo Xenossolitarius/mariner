@@ -9,7 +9,7 @@ const HASH_LENGTH = 8
 /**
  * Import and process .bin assets.
  */
-export default function transformBuildAssets(base: string, options: ServerOptions): Plugin {
+export const transformBuildAssets = (base: string, options: ServerOptions): Plugin => {
   let publicDirPath = ''
 
   const rootBasePath = options.commands.rootBase ? `/${options.commands.rootBase}` : ''

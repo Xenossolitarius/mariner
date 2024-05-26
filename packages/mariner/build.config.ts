@@ -11,6 +11,8 @@ export default defineBuildConfig([
       // workers
       { input: 'src/server/build/worker' },
       { input: 'src/server/generate-types/worker' },
+      // plugins
+      { input: 'src/server/plugins/index' },
     ],
     externals: ['vite', 'defu', 'vue', 'react', 'react-dom/client'],
   },

@@ -14,7 +14,7 @@ import { FleetConfig, getFleetConfig } from './fleet'
  */
 
 export const getMarineConfigPaths = () =>
-  glob(`**/${FILES.config}`, { ignore: ['node_modules/**', 'dist'], withFileTypes: true })
+  glob(`**/${FILES.config}.{js,ts}`, { ignore: ['node_modules/**', 'dist'], withFileTypes: true })
 
 export type MarinerProject = {
   root: string

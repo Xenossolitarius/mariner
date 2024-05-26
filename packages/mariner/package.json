@@ -19,6 +19,11 @@
       "import": "./dist/navigator/index.mjs",
       "require": "./dist/navigator/index.mjs"
     },
+    "./plugins": {
+      "types": "./dist/server/plugins/index.d.ts",
+      "import": "./dist/server/plugins/index.mjs",
+      "require": "./dist/server/plugins/index.mjs"
+    },
     "./package.json": "./package.json"
   },
   "typesVersions": {

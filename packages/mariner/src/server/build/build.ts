@@ -4,7 +4,7 @@ import { MarinerProject, loadMarinerConfigFile } from '../..'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import path from 'node:path'
-import transformBuildAssets from '../plugins/transform-build-assets'
+import { transformBuildAssets } from '../plugins/transform-build-assets'
 import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
 import WorkerPool from '../worker-pool'
 

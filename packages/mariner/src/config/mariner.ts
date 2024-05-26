@@ -1,4 +1,4 @@
-import { type UserConfig, defineConfig, splitVendorChunkPlugin } from 'vite'
+import { type UserConfig, defineConfig } from 'vite'
 import { defu } from 'defu'
 import { FILES } from '../constants'
 
@@ -15,7 +15,6 @@ export type MarinerUserConfig = {
 } & UserConfig
 
 const getMarinerViteConfig = (): UserConfig => ({
-  plugins: [splitVendorChunkPlugin()],
   build: {
     modulePreload: {
       polyfill: false,
