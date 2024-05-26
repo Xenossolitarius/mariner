@@ -1,13 +1,11 @@
-import { Worker } from 'worker_threads'
+import { Worker } from 'node:worker_threads'
 
 import { join } from 'node:path'
 import os from 'node:os'
 import { ServerOptions } from './server'
 import { MarinerProject } from '../setup'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-const scriptPath = globalThis.marinerScriptPath || 'dist'
+const scriptPath = () => globalThis.marinerCliEntry || 'dist'
 
 export type TaskPayload = {
   options: ServerOptions
@@ -31,10 +29,10 @@ class WorkerPool {
     const workerNum = size ?? Math.min(Math.floor(os.cpus().length / 2), 4) // default half cores or at least 4
     console.log(workerNum)
 
-    console.log(join(scriptPath, path))
+    console.log(join(scriptPath(), path))
 
     for (let i = 0; i < workerNum; i++) {
-      const worker = new Worker(join(scriptPath, path))
+      const worker = new Worker(join(scriptPath(), path))
       worker.on('message', () => {
         this.handleWorkerAvailable(worker)
       })

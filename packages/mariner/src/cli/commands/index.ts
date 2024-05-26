@@ -1,4 +1,4 @@
-import { program } from '@commander-js/extra-typings'
+import { program } from 'commander'
 import { MARINER_DESCRIPTION } from '../messages'
 
 import './dev'

@@ -1,4 +1,4 @@
-import { program } from '@commander-js/extra-typings'
+import { program } from 'commander'
 import { options as serverOptions } from './shared/server'
 import { GENERATING_TYPES } from '../messages'
 import { configure } from '../steps/configure'

@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "sail": "sail",
     "clean:port": "sudo kill -9 $(sudo lsof -t -i:3000)",
     "clean:node": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,7 +14,6 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@vitejs/plugin-vue": "5.0.3",
     "defu": "^6.1.4",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",

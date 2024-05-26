@@ -42,15 +42,8 @@ export const buildNavigator = async (serverOps: ServerOptions, project: MarinerP
   })
 }
 
-// export const createBuildServer = async (options: ServerOptions) => {
-//   const start = performance.now()
-//   await Promise.all(options.projects.map((project) => buildNavigator(options, project)),
-//   )
-//   console.log('FUCKING FINISHED', performance.now() - start)
-// }
-
 export const createBuildServer = async (options: ServerOptions) => {
-  const pool = new WorkerPool('/dist/server/build/worker.mjs', options.commands.threads)
+  const pool = new WorkerPool('server/build/worker.mjs', options.commands.threads)
   await Promise.all(options.projects.map((project) => pool.run({ options, project })))
   pool.close()
 }

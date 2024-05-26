@@ -1,16 +1,18 @@
 #!/usr/bin/env node
-import './setup' // runs first
-import { program } from '@commander-js/extra-typings'
+import { program } from 'commander'
 import { start } from './steps/start'
 
 import './commands'
 import { exit } from './steps/exit'
+import { WORKING_IN } from './messages'
+
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+
+globalThis.marinerCliEntry = globalThis.marinerCliEntry ?? resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 export const run = async () => {
-  console.log(process.cwd())
-  // just to test the console
-  process.chdir('../../playground')
-  console.log(process.cwd())
+  WORKING_IN(process.cwd())
 
   start()
 

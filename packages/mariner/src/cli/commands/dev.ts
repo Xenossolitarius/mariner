@@ -1,4 +1,4 @@
-import { program } from '@commander-js/extra-typings'
+import { program } from 'commander'
 import { options as serverOptions } from './shared/server'
 import { STARTING_DEV_SERVER } from '../messages'
 import { configure } from '../steps/configure'

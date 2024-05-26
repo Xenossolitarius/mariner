@@ -4,6 +4,10 @@
   "description": "Mariner Framework",
   "type": "module",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "mariner": "./bin/index.mjs",
+    "mariner-cli": "./bin/index.mjs"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
@@ -26,12 +30,15 @@
   },
   "files": [
     "dist",
-    "dist/navigator"
+    "dist/navigator",
+    "dist/cli",
+    "dist/server"
   ],
   "scripts": {
     "start": "tsx ./src/cli/main.ts",
     "start:build": "tsx ./src/cli/main.ts build",
     "start:generate": "tsx ./src/cli/main.ts generate",
+    "mariner": "mariner",
     "dev": "nodemon --config nodemon.server.json",
     "build": "unbuild",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -41,10 +48,10 @@
     "@koa/router": "^12.0.1",
     "@rollup/pluginutils": "^5.1.0",
     "@types/koa": "^2.15.0",
-    "ajv": "^8.13.0",
+    "ajv": "^8.14.0",
     "boxen": "^7.1.1",
     "chalk": "^5.3.0",
-    "commander": "^11.1.0",
+    "commander": "^12.1.0",
     "connect": "^3.7.0",
     "esbuild": "^0.20.2",
     "glob": "^10.4.1",
@@ -58,7 +65,6 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "devDependencies": {
-    "@commander-js/extra-typings": "^11.1.0",
     "@types/connect": "^3.4.38",
     "@types/glob": "^8.1.0",
     "@types/inquirer": "9.0.7",

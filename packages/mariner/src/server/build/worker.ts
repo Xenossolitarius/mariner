@@ -1,4 +1,4 @@
-import { parentPort } from 'worker_threads'
+import { parentPort } from 'node:worker_threads'
 import { buildNavigator } from './build'
 import type { TaskPayload } from '../worker-pool'
 

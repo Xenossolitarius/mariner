@@ -40,3 +40,5 @@ export const IGNORING_FLEET_NO_CONFIG = chalk.yellow.bold('Ignoring fleet option
 export const SELECT_FLEET = 'Select fleet'
 
 export const RUN_SINGLE_NAVIGATOR = chalk.cyan.bold('Selecting one navigator')
+
+export const WORKING_IN = (path?: string) => path && chalk.cyan(`Working in: ${path}`)

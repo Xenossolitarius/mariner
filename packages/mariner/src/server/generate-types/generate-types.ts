@@ -44,7 +44,7 @@ export const generateTypes = async (serverOps: ServerOptions, project: MarinerPr
 }
 
 export const createTypeGeneratorServer = async (options: ServerOptions) => {
-  const pool = new WorkerPool('/dist/server/generate-types/worker.mjs', options.commands.threads)
+  const pool = new WorkerPool('server/generate-types/worker.mjs', options.commands.threads)
   await Promise.all(options.projects.map((project) => !project.isJs && pool.run({ options, project })))
   pool.close()
   await generateMarinerTypeFile()
