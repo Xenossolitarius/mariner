@@ -6,7 +6,9 @@
   "scripts": {
     "clean:port": "sudo kill -9 $(sudo lsof -t -i:3000)",
     "clean:node": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client:index": "http-server ./playground/client/index",
+    "client:build": "http-server ./playground/dist --port 3000 --cors"
   },
   "resolutions": {
     "mariner-fe": "workspace:*"
@@ -28,7 +30,8 @@
   "devDependencies": {
     "@types/node": "^20.12.12",
     "nodemon": "^3.1.1",
-    "unbuild": "^2.0.0"
+    "unbuild": "^2.0.0",
+    "http-server": "^14.1.1"
   },
   "keywords": [],
   "author": "Ivan Pešić",

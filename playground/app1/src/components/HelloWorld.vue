@@ -2,6 +2,12 @@
 import { ref } from 'vue'
 import { useCounter } from 'navigator:shared'
 
+const startLazyNavigator = async () => {
+  const { lazy } = await import('navigator:lazy')
+
+  lazy()
+}
+
 defineProps<{ msg: string }>()
 
 const count = ref(0)
@@ -30,6 +36,7 @@ counterStore.$subscribe(() => rerenderKey.value +=1)
       <code>components/HelloWorld.vue</code> to test HMR
     </p>
     <button :key="rerenderKey" type="button" @click="counterStore.update">Shared store count is {{ counterStore.counter }}</button>
+    <button @click="startLazyNavigator"> Import lazy navigator</button>
   </div>
 
   <p>

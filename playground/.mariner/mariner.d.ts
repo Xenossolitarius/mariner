@@ -35,6 +35,13 @@ declare module 'navigator:envs' {
   export { }
   
 }
+declare module 'navigator:lazy' {
+
+  export const lazy: () => void;
+  
+  export { }
+  
+}
 declare module 'navigator:shared' {
 
   import { Pinia } from 'pinia';
