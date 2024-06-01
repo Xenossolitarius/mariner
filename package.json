@@ -25,13 +25,13 @@
     "prettier": "^3.2.5",
     "tsx": "^4.11.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "vite": "^5.2.12"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
-    "nodemon": "^3.1.1",
-    "unbuild": "^2.0.0",
-    "http-server": "^14.1.1"
+    "@types/node": "^20.13.0",
+    "http-server": "^14.1.1",
+    "nodemon": "^3.1.2",
+    "unbuild": "^2.0.0"
   },
   "keywords": [],
   "author": "Ivan Pešić",
