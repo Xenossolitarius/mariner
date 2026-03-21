@@ -1,3 +1,7 @@
 packages:
-  - "packages/**"
-  - "playground/**"
+  - packages/**
+  - playground/**
+
+onlyBuiltDependencies:
+  - esbuild
+  - vue-demi
