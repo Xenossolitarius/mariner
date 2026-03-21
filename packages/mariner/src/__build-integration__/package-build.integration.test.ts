@@ -42,19 +42,19 @@ describe('package build — file structure', () => {
   it('produces all expected library entry files', () => {
     expect(fileExists('index.mjs')).toBe(true)
     expect(fileExists('index.d.mts')).toBe(true)
-    expect(fileExists('index.d.ts')).toBe(true)
+    expect(fileExists('index.d.mts')).toBe(true)
   })
 
   it('produces navigator entry files', () => {
     expect(fileExists('navigator/index.mjs')).toBe(true)
     expect(fileExists('navigator/index.d.mts')).toBe(true)
-    expect(fileExists('navigator/index.d.ts')).toBe(true)
+    expect(fileExists('navigator/index.d.mts')).toBe(true)
   })
 
   it('produces plugins entry files', () => {
     expect(fileExists('server/plugins/index.mjs')).toBe(true)
     expect(fileExists('server/plugins/index.d.mts')).toBe(true)
-    expect(fileExists('server/plugins/index.d.ts')).toBe(true)
+    expect(fileExists('server/plugins/index.d.mts')).toBe(true)
   })
 
   it('produces CLI bundle', () => {
@@ -73,7 +73,7 @@ describe('package build — file structure', () => {
   })
 
   it('CLI bundle has no declaration files', () => {
-    expect(fileExists('cli/index.d.ts')).toBe(false)
+    expect(fileExists('cli/index.d.mts')).toBe(false)
     expect(fileExists('cli/index.d.mts')).toBe(false)
   })
 
@@ -178,33 +178,33 @@ describe('package build — externals', () => {
 
   it('CLI uses node:http and node:https (not http2)', () => {
     const code = fileContent('cli/index.mjs')
-    expect(code).toContain("from 'node:http'")
-    expect(code).toContain("from 'node:https'")
-    expect(code).not.toContain("from 'node:http2'")
+    expect(code).toMatch(/from ['"]node:http['"]/)
+    expect(code).toMatch(/from ['"]node:https['"]/)
+    expect(code).not.toMatch(/from ['"]node:http2['"]/)
   })
 })
 
 describe('package build — type declarations', () => {
-  it('index.d.ts exports MarinerUserConfig type', () => {
-    const dts = fileContent('index.d.ts')
+  it('index.d.mts exports MarinerUserConfig type', () => {
+    const dts = fileContent('index.d.mts')
     expect(dts).toContain('MarinerUserConfig')
     expect(dts).toContain('defineMarinerConfig')
   })
 
   it('navigator types export Navigator type and adapters', () => {
-    const dts = fileContent('navigator/index.d.ts')
+    const dts = fileContent('navigator/index.d.mts')
     expect(dts).toContain('Navigator')
     expect(dts).toContain('createVueNavigator')
     expect(dts).toContain('createReactNavigator')
   })
 
   it('plugins types export plugin functions', () => {
-    const dts = fileContent('server/plugins/index.d.ts')
+    const dts = fileContent('server/plugins/index.d.mts')
     expect(dts).toContain('resolveVirtualNavigators')
     expect(dts).toContain('transformBuildAssets')
   })
 
-  it('.d.mts files exist alongside .d.ts (dual declaration)', () => {
+  it('.d.mts declaration files exist for all entries', () => {
     expect(fileExists('index.d.mts')).toBe(true)
     expect(fileExists('navigator/index.d.mts')).toBe(true)
     expect(fileExists('server/plugins/index.d.mts')).toBe(true)

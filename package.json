@@ -30,12 +30,12 @@
     "eslint": "^10.1.0",
     "eslint-plugin-prettier": "^5.5.5",
     "nodemon": "^3.1.14",
+    "obuild": "^0.4.32",
     "prettier": "^3.8.1",
     "sirv-cli": "^3.0.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
-    "unbuild": "^3.6.1",
     "vite": "^8.0.1",
     "vitest": "^4.1.0"
   },

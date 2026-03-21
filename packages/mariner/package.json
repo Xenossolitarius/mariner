@@ -14,7 +14,7 @@
   ],
   "license": "MIT",
   "type": "module",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "bin": {
     "mariner": "./bin/index.mjs",
     "mariner-cli": "./bin/index.mjs"
@@ -26,12 +26,12 @@
       "require": "./dist/index.mjs"
     },
     "./navigator": {
-      "types": "./dist/navigator/index.d.ts",
+      "types": "./dist/navigator/index.d.mts",
       "import": "./dist/navigator/index.mjs",
       "require": "./dist/navigator/index.mjs"
     },
     "./plugins": {
-      "types": "./dist/server/plugins/index.d.ts",
+      "types": "./dist/server/plugins/index.d.mts",
       "import": "./dist/server/plugins/index.mjs",
       "require": "./dist/server/plugins/index.mjs"
     },
@@ -40,10 +40,10 @@
   "typesVersions": {
     "*": {
       "navigator": [
-        "./dist/navigator/index.d.ts"
+        "./dist/navigator/index.d.mts"
       ],
       "plugins": [
-        "./dist/server/plugins/index.d.ts"
+        "./dist/server/plugins/index.d.mts"
       ]
     }
   },
@@ -60,7 +60,7 @@
     "start:generate": "tsx ./src/cli/main.ts generate",
     "mariner-fe": "mariner-fe",
     "dev": "nodemon --config nodemon.server.json",
-    "build": "unbuild",
+    "build": "obuild",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude 'src/__build-integration__/**'",
     "test:integration": "vitest run --fileParallelism=false src/__build-integration__/",
