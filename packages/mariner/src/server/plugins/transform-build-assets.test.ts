@@ -154,5 +154,50 @@ describe('transformBuildAssets', () => {
       expect(fs.readFile).toHaveBeenCalledWith(expect.stringContaining('public'))
       expect(result).toContain('export default')
     })
+
+    it('falls back to publicDir when absolute path does not exist', async () => {
+      const plugin = getPlugin()
+      const configResolved = plugin.configResolved as (config: { publicDir: string }) => void
+      configResolved({ publicDir: '/project/public' })
+
+      // First readFile fails (absolute path), second succeeds (publicDir fallback)
+      vi.mocked(fs.readFile)
+        .mockRejectedValueOnce(new Error('ENOENT'))
+        .mockResolvedValueOnce(Buffer.from('fallback-asset'))
+
+      const emitFile = vi.fn()
+      const load = getLoad(plugin)
+
+      const result = await load.call({ emitFile }, '/vite.svg')
+
+      expect(fs.readFile).toHaveBeenCalledTimes(2)
+      expect(emitFile).toHaveBeenCalled()
+      expect(result).toContain('export default')
+    })
+
+    it('returns null when file not found in publicDir either', async () => {
+      const plugin = getPlugin()
+      const configResolved = plugin.configResolved as (config: { publicDir: string }) => void
+      configResolved({ publicDir: '/project/public' })
+
+      vi.mocked(fs.readFile).mockRejectedValue(new Error('ENOENT'))
+
+      const load = getLoad(plugin)
+      const result = await load.call({ emitFile: vi.fn() }, '/missing.png')
+
+      expect(result).toBeNull()
+    })
+
+    it('returns null when no publicDir and file not found', async () => {
+      const plugin = getPlugin()
+      // No configResolved called, so publicDirPath is empty
+
+      vi.mocked(fs.readFile).mockRejectedValue(new Error('ENOENT'))
+
+      const load = getLoad(plugin)
+      const result = await load.call({ emitFile: vi.fn() }, '/missing.png')
+
+      expect(result).toBeNull()
+    })
   })
 })
