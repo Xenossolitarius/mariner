@@ -158,7 +158,9 @@ describe('select', () => {
 
       await select(makeSetup(projects), {} as never)
 
-      const promptCall = vi.mocked(inquirer.prompt).mock.calls[0][0] as Array<{ choices: Array<{ disabled: unknown }> }>
+      const promptCall = vi.mocked(inquirer.prompt).mock.calls[0][0] as unknown as Array<{
+        choices: Array<{ disabled: unknown }>
+      }>
       const choices = promptCall[0].choices
       expect(choices[0].disabled).toBeFalsy()
       expect(choices[1].disabled).toBeTruthy()
