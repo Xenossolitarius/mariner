@@ -14,6 +14,7 @@
     "test:all": "pnpm --filter mariner-fe test:all",
     "test:e2e": "pnpm --filter mariner-fe test:e2e",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "check:full": "pnpm check && pnpm test:integration && pnpm test:e2e",
     "client:index": "http-server ./playground/client/index",
     "client:build": "http-server ./playground/dist --port 3000 --cors"
   },

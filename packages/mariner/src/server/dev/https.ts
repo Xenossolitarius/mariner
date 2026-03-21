@@ -1,6 +1,6 @@
 import forge from 'node-forge'
-import https from 'node:http2'
-import Koa from 'koa'
+import https from 'node:https'
+import type http from 'node:http'
 import path from 'node:path'
 import fsp from 'node:fs/promises'
 
@@ -152,18 +152,12 @@ const getCertificate = async () => {
 }
 
 export const startHTTPSServer = async (
-  app: Koa,
+  handler: http.RequestListener,
   { port, hostname }: { port: number; hostname: string; secure: true | undefined },
 ) => {
   const certificate = await getCertificate()
 
-  const server = https.createSecureServer(
-    {
-      key: certificate,
-      cert: certificate,
-    },
-    app.callback(),
-  )
+  const server = https.createServer({ key: certificate, cert: certificate }, handler)
 
   server.listen(port, hostname, () => {
     console.log(`Started dev (https) on: https://${hostname}:${port}`)

@@ -1,12 +1,7 @@
-import { createServer as createViteServer } from 'vite'
+import { createServer as createViteServer, type ViteDevServer } from 'vite'
+import http from 'node:http'
 import { ServerOptions } from '../server'
 import { DEV_SERVER_DEFAULTS } from '.'
-
-import Koa from 'koa'
-import koaConnect from 'koa-connect'
-import connect from 'connect'
-import koaCors from '@koa/cors'
-
 import { MarinerProject } from '../..'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
@@ -18,25 +13,28 @@ export const getServerUrl = (serverOps: ServerOptions) => ({
   secure: serverOps.commands.https,
 })
 
+export type AppRoute = {
+  base: string
+  navigator: string
+  vite: ViteDevServer
+}
+
 export const createNavServer = async (
-  connector: connect.Server,
   serverOps: ServerOptions,
   project: MarinerProject,
   index = 0,
-) => {
-  const config = project.configFile!.config // will asume it exists
+): Promise<AppRoute> => {
+  const config = project.configFile!.config
 
   const { port, hostname, secure } = getServerUrl(serverOps)
 
   const base = `/${project.mariner}`
-
   const rootBasePath = serverOps.commands.rootBase ? `/${serverOps.commands.rootBase}` : ''
-
   const fullBase = `${rootBasePath}${base}`
 
   config.build!.rollupOptions!.input = project.navigator
 
-  const server = await createViteServer({
+  const vite = await createViteServer({
     ...config,
     appType: 'custom',
     base: fullBase,
@@ -47,51 +45,58 @@ export const createNavServer = async (
     plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps)],
     server: {
       middlewareMode: true,
-      origin: `${secure ? 'https' : 'http'}://${hostname}:${port}`, // TODO: SSL
+      origin: `${secure ? 'https' : 'http'}://${hostname}:${port}`,
       hmr: { port: 6001 + index, protocol: secure ? 'wss' : 'ws' },
     },
   })
 
-  connector.use(fullBase, (req, res, next) => {
-    // remove base
-    req.url = req.url?.replace(fullBase, '')
+  return { base: fullBase, navigator: project.navigator!, vite }
+}
 
-    serverOps.commands.debug && console.log(`${fullBase}, ${req.url}`)
-
-    const entry = '/navigator.js'
-
-    if (req.url === entry) {
-      req.url = `/${project.navigator}`
+export const createHandler = (routes: AppRoute[], debug?: boolean): http.RequestListener => {
+  return (req, res) => {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', '*')
+    res.setHeader('Access-Control-Allow-Headers', '*')
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204).end()
+      return
     }
 
-    server.middlewares(req, res, next)
-  })
+    const url = req.url || '/'
 
-  return server
+    // Match request to an app route
+    const route = routes.find((r) => url.startsWith(r.base))
+    if (!route) {
+      res.writeHead(404).end()
+      return
+    }
+
+    // Strip base path
+    req.url = url.slice(route.base.length) || '/'
+
+    debug && console.log(`${route.base}, ${req.url}`)
+
+    // Rewrite /navigator.js to the actual navigator file
+    if (req.url === '/navigator.js') {
+      req.url = `/${route.navigator}`
+    }
+
+    route.vite.middlewares(req, res)
+  }
 }
 
 export const createDevServer = async (options: ServerOptions) => {
-  const app = new Koa()
-  const router = connect()
-
-  app.use(koaCors())
-
-  await Promise.all(options.projects.map((project, index) => createNavServer(router, options, project, index)))
-
-  options.commands.debug &&
-    router.use((req, res, next) => {
-      console.log(req.url)
-      next()
-    })
-
-  app.use(koaConnect(router))
+  const routes = await Promise.all(options.projects.map((project, index) => createNavServer(options, project, index)))
 
   const { port, hostname, secure } = getServerUrl(options)
+  const handler = createHandler(routes, options.commands.debug)
 
   if (secure) {
-    startHTTPSServer(app, { port, hostname, secure })
+    startHTTPSServer(handler, { port, hostname, secure })
   } else {
-    app.listen(port, hostname, () => {
+    http.createServer(handler).listen(port, hostname, () => {
       console.log(`Started dev on: http://${hostname}:${port}`)
     })
   }
