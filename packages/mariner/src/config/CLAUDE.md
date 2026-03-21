@@ -11,6 +11,7 @@ Configuration schema, defaults, and validation for Mariner.
 ## Mariner Defaults
 
 Applied via `defu` (won't be overwritten by user config):
+
 - `build.manifest: true`
 - `build.modulePreload.polyfill: false`
 - `build.rolldownOptions.input: 'navigator'`

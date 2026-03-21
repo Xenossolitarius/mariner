@@ -27,10 +27,10 @@ It provides a number of ways it can be used while maintaining performance, scale
 
 ## <a name="how-it-works">⛵ How it works</a>
 
-Mariner is a framework built on top of Vite but unlike module federation it doesn't mandate the developer to opt into a framework per say. Everything which works with Vite has a pretty good chance to work with Mariner microfrontend. Mariner is framework agnostic. 
+Mariner is a framework built on top of Vite but unlike module federation it doesn't mandate the developer to opt into a framework per say. Everything which works with Vite has a pretty good chance to work with Mariner microfrontend. Mariner is framework agnostic.
 Microfrontend is whatever you decide microfrontend is.
 
-What it does is force modern technological conventions: 
+What it does is force modern technological conventions:
 
 ### Monorepo
 
@@ -75,7 +75,6 @@ export default defineMarinerConfig({
   mariner: 'app1',
   plugins: [vue()],
 })
-
 ```
 
 The navigator will build as an ES module so you can auto mount a whole app, expose only a few components or make it read the data from the DOM. The choice is full on the developer
@@ -89,7 +88,6 @@ import App from './src/App.vue'
 const app = createApp(App)
 
 export { app }
-
 ```
 
 After that you can import it into your DOM any way you see fit (keep in mind of ES module)
@@ -123,33 +121,29 @@ import App from './src/App.vue'
 const app = createApp(App)
 
 export const navigator = createVueNavigator(app)
-
 ```
 
 **React**
 
 ```ts
 /* navigator.ts */
-import { createReactNavigator } from 'mariner-fe/navigator';
+import { createReactNavigator } from 'mariner-fe/navigator'
 import { NavigatorApp } from './src/main-navigator'
 import ReactDOM from 'react-dom/client'
 
 export const navigator = createReactNavigator(ReactDOM.createRoot, NavigatorApp())
-
 ```
 
 ## <a name="combine-microfrontends">🧩 Combine microfrontends</a>
 
 Mariner exposes a mechanism of combining microfrontends through module aliasing in build time.
 The mechanism is quite simple:
-If the name of the microfrontend is for example `app1` then it is going to be prefixed with `navigator:` resulting in an `navigator:app1` import that gets transformed into `/app1/navigator.js` in dev and build. You can add rootBase if you need to shift the hosting to for example  `/microfe`.
+If the name of the microfrontend is for example `app1` then it is going to be prefixed with `navigator:` resulting in an `navigator:app1` import that gets transformed into `/app1/navigator.js` in dev and build. You can add rootBase if you need to shift the hosting to for example `/microfe`.
 You can do pretty much everything you can do in your code editor. Beware of extensive granularity because it will make a difference in your network speed and unintentional bundle size.
 
 ```vue
 <template>
-  <button type="button" @click="counterStore.update">
-    Shared store count is {{ counterStore.counter }}
-  </button>
+  <button type="button" @click="counterStore.update">Shared store count is {{ counterStore.counter }}</button>
 </template>
 
 <script setup lang="ts">
@@ -168,7 +162,7 @@ button {
 
 ## <a name="fleets">🚢 Fleets</a>
 
-Because the microfrontend workflow can extend to 1k+ developers it can encompass an infinite number of microfrontends. Because this architecture is hard to scale, more dev than build mariner offers an extensive CLI journey for selecting which microfrontends to run. 
+Because the microfrontend workflow can extend to 1k+ developers it can encompass an infinite number of microfrontends. Because this architecture is hard to scale, more dev than build mariner offers an extensive CLI journey for selecting which microfrontends to run.
 
 Also you can predefine a subset of microfrontends to run together via `fleet.config.json`
 
@@ -185,7 +179,7 @@ Mariner will try to read it in the root of where it was called and has it's own 
 
 Mariner can build with modes. It leverages the vite modes enabling the `.env` files to pull specific configurations.
 
-This can be a very powerful feature combined with aliases where you can expose entire configuration in a single microfrontend to the rest of your federation. 
+This can be a very powerful feature combined with aliases where you can expose entire configuration in a single microfrontend to the rest of your federation.
 
 Add fleets to the mix and it makes for a really nice CI/CD workflow where you can reduce the amount of builds by just rebuilding the configuration microfrontend and moving it to the rest of the built fleet.
 
@@ -195,7 +189,7 @@ There are couple of workflows that are available when using Mariner locally. You
 from other sources like your test/stage environment or prebuilt microfrontends (static hosting). In case you need combination of sources
 the [`importmap`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) is a great native DOM solution to this problem.
 
-For example: 
+For example:
 
 ```html
 <script type="importmap">
@@ -212,7 +206,7 @@ For example:
 
 This way you can locally host only affected microfrontends and not put such a heavy load to your local machine.
 
-Also you can use this mechanism to override certain microfrontends and redirect to a *different build* for a specific market you are supporting.
+Also you can use this mechanism to override certain microfrontends and redirect to a _different build_ for a specific market you are supporting.
 
 ## <a name="hmr">🚧 HMR </a>
 
@@ -220,12 +214,12 @@ Hmr is available for most Vite supported frameworks although it requires a bit o
 
 ## <a name="build">🔧 Build </a>
 
-Build and type generation are done by node workers meaning they run in parallel. Mariner generally tries to decouple 
+Build and type generation are done by node workers meaning they run in parallel. Mariner generally tries to decouple
 dependencies, runtime, build time as much as possible in dev and build. Although the dev server is inefficient to spawn as different processes the build and type generation benefit from parallelization. There is no golden number of threads so the CLI adds the `--threads` flag which enables you to fine tune performance for your fleet and CI/CD.
 
 ## <a name="type-generation">🧰 Type generation </a>
 
-Mariner takes **typescript** as a first class citizen and exposes a command `generate` which will ,as long as the navigator is in typescript, generate 
+Mariner takes **typescript** as a first class citizen and exposes a command `generate` which will ,as long as the navigator is in typescript, generate
 a folder from the microfrontend selection named `.mariner` which will contain all the exposed types.
 
 From there you can opt-in into using those types by importing them to your local `tsconfig` file

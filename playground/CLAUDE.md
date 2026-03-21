@@ -32,6 +32,7 @@ pnpm client:build    # Serve built output
 ## Cross-App Imports
 
 Apps can import from each other using virtual modules:
+
 ```ts
 import { pinia } from 'navigator:shared'
 ```

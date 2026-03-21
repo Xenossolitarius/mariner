@@ -11,7 +11,6 @@ const increase = () => {
 }
 
 const counterStore = useCounter()
-
 </script>
 
 <template>
@@ -28,9 +27,8 @@ const counterStore = useCounter()
 
   <p>
     Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
+    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank">create-vue</a>, the official Vue + Vite
+    starter
   </p>
   <p>
     Install

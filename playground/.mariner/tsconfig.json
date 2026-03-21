@@ -1,9 +1,3 @@
-
-  {
-    "include": [
-      ".",
-      "./mariner.d.ts",
-      "*.d.ts"
-    ]
-  }
-  
+{
+  "include": [".", "./mariner.d.ts", "*.d.ts"]
+}

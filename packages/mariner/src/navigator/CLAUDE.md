@@ -18,9 +18,12 @@ A "navigator" is the public interface of a microfrontend — the object it expor
 ## Virtual Module Pattern
 
 Apps import navigators from other apps via `navigator:<appname>`:
+
 ```ts
 import { pinia } from 'navigator:shared'
 ```
+
 These are resolved by the `resolve-virtual-navigators` Vite plugin at dev/build time.
+
 - Dev: marked as external, served at `/{appname}/navigator.js`
 - Build: rewritten to `/appname/navigator.js`, marked as external in bundle
