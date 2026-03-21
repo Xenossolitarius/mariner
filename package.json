@@ -16,8 +16,8 @@
     "test:e2e": "pnpm --filter mariner-fe test:e2e",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "check:full": "pnpm check && pnpm test:integration && pnpm test:e2e",
-    "client:index": "http-server ./playground/client/index",
-    "client:build": "http-server ./playground/dist --port 3000 --cors"
+    "client:index": "sirv ./playground/client/index",
+    "client:build": "sirv ./playground/dist --port 3000 --cors"
   },
   "resolutions": {
     "mariner-fe": "workspace:*"
@@ -29,9 +29,9 @@
     "dotenv": "^17.3.1",
     "eslint": "^10.1.0",
     "eslint-plugin-prettier": "^5.5.5",
-    "http-server": "^14.1.1",
     "nodemon": "^3.1.14",
     "prettier": "^3.8.1",
+    "sirv-cli": "^3.0.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",

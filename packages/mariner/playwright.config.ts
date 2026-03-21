@@ -54,7 +54,7 @@ export default defineConfig({
       timeout: 30000,
     },
     {
-      command: `npx http-server ${path.join(monorepoRoot, 'dist')} --port 4173 --cors -s`,
+      command: `npx sirv ${path.join(monorepoRoot, 'dist')} --port 4173 --cors`,
       port: 4173,
       reuseExistingServer: true,
       timeout: 10000,
