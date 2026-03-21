@@ -25,15 +25,30 @@ export const transformBuildAssets = (base: string, options: ServerOptions): Plug
     async load(id) {
       if (!isAssetFile(id)) return null
 
-      // handle public
+      // handle public dir assets
       if (id.includes('vite:asset:public')) {
-        // console.log(path.sep, id)
         id = id.replace('vite:asset:public' + path.sep, '')
-        id = id.replace('\0', '') // remove virtual path
+        id = id.replace('\0', '')
         id = path.join(publicDirPath, id)
       }
 
-      const asset = await fs.readFile(id)
+      // Vite 6 may pass absolute-looking public paths (e.g. /vite.svg)
+      // Try resolving from publicDir if the file doesn't exist at the given path
+      let asset: Buffer
+      try {
+        asset = await fs.readFile(id)
+      } catch {
+        if (publicDirPath) {
+          try {
+            id = path.join(publicDirPath, id)
+            asset = await fs.readFile(id)
+          } catch {
+            return null // let Vite handle it
+          }
+        } else {
+          return null
+        }
+      }
       const hash = generateHash(asset)
       const extname = path.extname(id)
       const basename = path.basename(id, extname)

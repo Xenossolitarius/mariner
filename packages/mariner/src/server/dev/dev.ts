@@ -33,7 +33,9 @@ export const createNavServer = async (
   const rootBasePath = serverOps.commands.rootBase ? `/${serverOps.commands.rootBase}` : ''
   const fullBase = `${rootBasePath}${base}`
 
-  config.build!.rollupOptions!.input = project.navigator
+  config.build = config.build ?? {}
+  config.build.rollupOptions = config.build.rollupOptions ?? {}
+  config.build.rollupOptions.input = project.navigator
 
   const vite = await createViteServer({
     ...config,

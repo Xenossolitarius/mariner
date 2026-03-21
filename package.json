@@ -35,8 +35,8 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.1",
     "unbuild": "^3.6.1",
-    "vite": "^5.2.12",
-    "vitest": "^2.1.9"
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4"
   },
   "keywords": [],
   "author": "Ivan Pešić",
