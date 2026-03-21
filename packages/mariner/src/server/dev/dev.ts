@@ -1,5 +1,6 @@
 import { createServer as createViteServer, type ViteDevServer } from 'vite'
 import http from 'node:http'
+import path from 'node:path'
 import { ServerOptions } from '../server'
 import { DEV_SERVER_DEFAULTS } from '.'
 import { MarinerProject } from '../..'
@@ -33,9 +34,7 @@ export const createNavServer = async (
   const rootBasePath = serverOps.commands.rootBase ? `/${serverOps.commands.rootBase}` : ''
   const fullBase = `${rootBasePath}${base}`
 
-  config.build = config.build ?? {}
-  config.build.rolldownOptions = config.build.rolldownOptions ?? {}
-  config.build.rolldownOptions.input = project.navigator
+  const navigatorEntry = path.join(project.root, project.navigator!)
 
   const vite = await createViteServer({
     ...config,
@@ -46,6 +45,7 @@ export const createNavServer = async (
     configFile: false,
     root: project.root,
     plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps)],
+    optimizeDeps: { entries: [navigatorEntry] },
     server: {
       middlewareMode: true,
       origin: `${secure ? 'https' : 'http'}://${hostname}:${port}`,
