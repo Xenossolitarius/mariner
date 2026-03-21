@@ -4,6 +4,7 @@
   "private": true,
   "description": "Mariner microfrontend framework monorepo",
   "scripts": {
+    "dev": "tsx packages/mariner/src/cli/main.ts dev --all",
     "clean:port": "sudo kill -9 $(sudo lsof -t -i:3000)",
     "clean:node": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
     "lint": "eslint .",
@@ -20,6 +21,11 @@
   },
   "resolutions": {
     "mariner-fe": "workspace:*"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:rolldown-vite@7.3.1"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
