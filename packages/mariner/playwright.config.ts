@@ -37,6 +37,13 @@ export default defineConfig({
         baseURL: 'http://localhost:3000',
       },
     },
+    {
+      name: 'screenshots',
+      testMatch: 'screenshots.e2e.ts',
+      use: {
+        baseURL: 'http://localhost:3000',
+      },
+    },
   ],
   webServer: [
     {
