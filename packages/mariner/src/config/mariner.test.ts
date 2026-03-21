@@ -26,9 +26,9 @@ describe('defineMarinerConfig', () => {
 
     const result = configFn({ command: 'build', mode: 'production' })
     const build = result.build as Record<string, unknown>
-    const rollupOptions = build.rollupOptions as Record<string, unknown>
+    const rolldownOptions = build.rolldownOptions as Record<string, unknown>
 
-    expect(rollupOptions.input).toBe('navigator')
+    expect(rolldownOptions.input).toBe('navigator')
   })
 
   it('preserves user config while merging defaults', () => {
@@ -76,8 +76,8 @@ describe('defineMarinerConfig', () => {
 
     const result = configFn({ command: 'build', mode: 'production' })
     const build = result.build as Record<string, unknown>
-    const rollupOptions = build.rollupOptions as Record<string, unknown>
+    const rolldownOptions = build.rolldownOptions as Record<string, unknown>
 
-    expect(rollupOptions.preserveEntrySignatures).toBe('exports-only')
+    expect(rolldownOptions.preserveEntrySignatures).toBe('exports-only')
   })
 })

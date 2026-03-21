@@ -4,7 +4,7 @@ export default defineMarinerConfig({
   mariner: 'shared',
   plugins: [],
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       external: ['vue'],
     },
   },

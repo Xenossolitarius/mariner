@@ -42,7 +42,7 @@ export function buildConfig(tmpDir: string, plugins: InlineConfig['plugins'] = [
       write: false,
       minify: false,
       outDir: path.join(tmpDir, 'dist'),
-      rollupOptions: {
+      rolldownOptions: {
         input: path.join(tmpDir, 'entry.js'),
       },
     },

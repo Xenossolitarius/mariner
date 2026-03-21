@@ -25,7 +25,7 @@ function makeServerOptions(projects: MarinerProject[]): ServerOptions {
 async function createTestServer(project: MarinerProject): Promise<ViteDevServer> {
   const config = project.configFile!.config
   config.build = config.build ?? {}
-  config.build.rollupOptions = config.build.rollupOptions ?? {}
+  config.build.rolldownOptions = config.build.rolldownOptions ?? {}
   const base = `/${project.mariner}`
 
   return createViteServer({

@@ -15,12 +15,12 @@ export const buildNavigator = async (serverOps: ServerOptions, project: MarinerP
   const base = `/${project.mariner}`
 
   config.build = config.build ?? {}
-  config.build.rollupOptions = config.build.rollupOptions ?? {}
+  config.build.rolldownOptions = config.build.rolldownOptions ?? {}
 
-  config.build.rollupOptions.input = path.join(project.root, project.navigator!)
+  config.build.rolldownOptions.input = path.join(project.root, project.navigator!)
   config.build.outDir = path.join(process.cwd(), 'dist', serverOps.commands.rootBase || '', project.mariner!)
   config.build.emptyOutDir = true
-  config.build.rollupOptions.output = {
+  config.build.rolldownOptions.output = {
     entryFileNames: `[name].js`,
     chunkFileNames: `[name]-[hash].js`,
     assetFileNames: `[name]-[hash].[ext]`,

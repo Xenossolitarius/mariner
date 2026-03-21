@@ -249,7 +249,7 @@ function makeProject(mariner: string, navigator = 'navigator.ts'): MarinerProjec
     packageJson: null,
     configFile: {
       path: `/projects/${mariner}/mariner.config.ts`,
-      config: { mariner, build: { rollupOptions: {} } } as never,
+      config: { mariner, build: { rolldownOptions: {} } } as never,
       dependencies: [],
     },
   }

@@ -33,7 +33,7 @@ export default defineConfig({
       polyfill: false,
     },
     manifest: true,
-    rollupOptions: {
+    rolldownOptions: {
       input: `navigator.ts`,
       preserveEntrySignatures: 'exports-only',
       output: {
