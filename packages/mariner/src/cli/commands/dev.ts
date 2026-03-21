@@ -11,13 +11,12 @@ serverOptions(program.command('dev', { isDefault: true }).description('Serve Mic
   .option('-h, --hostname <hostname>', 'Specify a hostname', DEV_SERVER_DEFAULTS.hostname)
   .option('--https', 'Use a HTTPS server')
   .action(async (options) => {
-    console.log(STARTING_DEV_SERVER)
-
     const serverOptions = await configure({
       command: 'serve',
       mode: options.mode || 'development',
       ...options,
     })
 
+    console.log(STARTING_DEV_SERVER)
     createServer(serverOptions)
   })

@@ -7,13 +7,12 @@ import { createServer } from '../../server'
 serverOptions(program.command('build'))
   .description('Build Micro Frontends')
   .action(async (options) => {
-    console.log(STARTING_BUILD)
-
     const serverOptions = await configure({
       command: 'build',
       mode: options.mode || 'production',
       ...options,
     })
 
+    console.log(STARTING_BUILD)
     createServer(serverOptions)
   })

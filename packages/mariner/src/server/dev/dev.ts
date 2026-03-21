@@ -6,6 +6,7 @@ import { MarinerProject } from '../..'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
 import { startHTTPSServer } from './https'
+import { SERVER_READY } from '../../cli/messages'
 
 export const getServerUrl = (serverOps: ServerOptions) => ({
   hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
@@ -93,11 +94,19 @@ export const createDevServer = async (options: ServerOptions) => {
   const { port, hostname, secure } = getServerUrl(options)
   const handler = createHandler(routes, options.commands.debug)
 
+  const printReady = (protocol: string) => {
+    console.log(
+      SERVER_READY(
+        `${protocol}://${hostname}:${port}`,
+        routes.map((r) => r.base),
+      ),
+    )
+  }
+
   if (secure) {
     startHTTPSServer(handler, { port, hostname, secure })
+    printReady('https')
   } else {
-    http.createServer(handler).listen(port, hostname, () => {
-      console.log(`Started dev on: http://${hostname}:${port}`)
-    })
+    http.createServer(handler).listen(port, hostname, () => printReady('http'))
   }
 }

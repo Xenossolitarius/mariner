@@ -334,7 +334,9 @@ describe('createDevServer', () => {
     await createDevServer(opts)
 
     expect(http.createServer).toHaveBeenCalled()
-    expect(logSpy).toHaveBeenCalledWith('Started dev on: http://localhost:3000')
+    const loggedOutput = logSpy.mock.calls[0][0]
+    expect(loggedOutput).toContain('http://localhost:3000')
+    expect(loggedOutput).toContain('Mariner Dev')
 
     logSpy.mockRestore()
   })

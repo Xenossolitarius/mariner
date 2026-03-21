@@ -7,13 +7,12 @@ import { createTypeGeneratorServer } from '../../server'
 serverOptions(program.command('generate'))
   .description('Generates microfrontend types')
   .action(async (options) => {
-    console.log(GENERATING_TYPES)
-
     const serverOptions = await configure({
       command: 'serve',
       mode: options.mode || 'development',
       ...options,
     })
 
+    console.log(GENERATING_TYPES)
     await createTypeGeneratorServer(serverOptions)
   })

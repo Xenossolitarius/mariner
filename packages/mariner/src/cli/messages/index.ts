@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import boxen from 'boxen'
 import { MarinerProject } from '../../setup'
 
 export const ENLISTING_NAVIGATORS = 'Enlisting navigators...'
@@ -42,3 +43,14 @@ export const SELECT_FLEET = 'Select fleet'
 export const RUN_SINGLE_NAVIGATOR = chalk.cyan.bold('Selecting one navigator')
 
 export const WORKING_IN = (path?: string) => path && chalk.cyan(`Working in: ${path}`)
+
+export const SERVER_READY = (url: string, navigators: string[]) => {
+  const apps = navigators.map((n) => `  ${chalk.green('➜')} ${chalk.bold(n)}`).join('\n')
+  return boxen(`${chalk.green.bold(url)}\n\n${chalk.dim('Navigators:')}\n${apps}`, {
+    padding: 1,
+    borderColor: 'green',
+    borderStyle: 'round',
+    title: 'Mariner Dev',
+    titleAlignment: 'center',
+  })
+}
