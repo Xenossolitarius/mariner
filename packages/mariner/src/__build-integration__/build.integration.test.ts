@@ -27,16 +27,17 @@ beforeAll(async () => {
   originalCwd = process.cwd()
   process.chdir(monorepoRoot)
 
-  await fs.rm(distDir, { recursive: true, force: true }).catch(() => {})
-
   const setup = await getMarinerSetup({ command: 'build', mode: 'production' })
   allProjects = setup.projects.filter((p) => p.isValid)
 
-  const opts = makeServerOptions(allProjects)
-
-  // Build all apps sequentially (no worker pool needed)
-  for (const project of allProjects) {
-    await buildNavigator(opts, project)
+  // Only build if dist doesn't exist yet
+  const distExists = await fs.stat(path.join(distDir, 'shared', 'navigator.js')).catch(() => null)
+  if (!distExists) {
+    await fs.rm(distDir, { recursive: true, force: true }).catch(() => {})
+    const opts = makeServerOptions(allProjects)
+    for (const project of allProjects) {
+      await buildNavigator(opts, project)
+    }
   }
 }, 120000)
 

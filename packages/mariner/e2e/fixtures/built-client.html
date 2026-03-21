@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mariner E2E — Built Client</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="shared-result"></div>
+    <div id="lazy-result"></div>
+    <div id="js-test-result"></div>
+
+    <script type="module">
+      // Load shared navigator and verify exports
+      try {
+        const shared = await import('/shared/navigator.js')
+        const keys = Object.keys(shared).sort().join(',')
+        document.getElementById('shared-result').textContent = 'SHARED:' + keys
+      } catch (e) {
+        document.getElementById('shared-result').textContent = 'SHARED_ERROR:' + e.message
+      }
+
+      // Load lazy navigator
+      try {
+        const lazy = await import('/lazy/navigator.js')
+        document.getElementById('lazy-result').textContent = 'LAZY:' + typeof lazy.lazy
+      } catch (e) {
+        document.getElementById('lazy-result').textContent = 'LAZY_ERROR:' + e.message
+      }
+
+      // Load js-test navigator
+      try {
+        const jsTest = await import('/js-test/navigator.js')
+        document.getElementById('js-test-result').textContent = 'JSTEST:' + typeof jsTest.shout
+      } catch (e) {
+        document.getElementById('js-test-result').textContent = 'JSTEST_ERROR:' + e.message
+      }
+    </script>
+  </body>
+</html>

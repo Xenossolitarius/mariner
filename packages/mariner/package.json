@@ -62,7 +62,10 @@
     "test:integration": "vitest run --fileParallelism=false src/__build-integration__/",
     "test:all": "vitest run",
     "test:coverage": "vitest run --coverage --exclude 'src/__build-integration__/**'",
-    "test:watch": "vitest --exclude 'src/__build-integration__/**'"
+    "test:watch": "vitest --exclude 'src/__build-integration__/**'",
+    "test:e2e": "playwright test",
+    "test:e2e:dev": "playwright test --project=dev-server",
+    "test:e2e:built": "playwright test --project=built-client"
   },
   "dependencies": {
     "@koa/cors": "5.0.0",
@@ -86,6 +89,7 @@
     "vite-plugin-dts": "^3.9.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/connect": "^3.4.38",
     "@types/glob": "^8.1.0",
     "@types/inquirer": "9.0.7",

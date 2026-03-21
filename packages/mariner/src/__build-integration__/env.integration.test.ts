@@ -64,12 +64,13 @@ describe('environment variable integration', () => {
 
   describe('env var substitution in build output', () => {
     beforeAll(async () => {
-      await fs.rm(distDir, { recursive: true, force: true }).catch(() => {})
-
-      const opts = makeServerOptions(allProjects)
-      // Build envs app specifically
-      const envsProject = allProjects.find((p) => p.mariner === 'envs')!
-      await buildNavigator(opts, envsProject)
+      // Build envs app only if not already built
+      const exists = await fs.stat(path.join(distDir, 'envs', 'navigator.js')).catch(() => null)
+      if (!exists) {
+        const opts = makeServerOptions(allProjects)
+        const envsProject = allProjects.find((p) => p.mariner === 'envs')!
+        await buildNavigator(opts, envsProject)
+      }
     }, 30000)
 
     it('envs navigator.js has import.meta.env.MARINER_GLOBAL_MODE replaced', async () => {
