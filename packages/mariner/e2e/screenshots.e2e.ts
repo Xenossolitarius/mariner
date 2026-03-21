@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './setup'
 import path from 'node:path'
 
 const DEV = 'http://localhost:3000'

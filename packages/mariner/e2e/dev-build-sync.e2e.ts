@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './setup'
 
 // Sync tests: verify dev server and built output produce consistent results.
 // Both servers must be running (dev on :3000, built on :4173).
@@ -41,7 +41,7 @@ test.describe('dev vs build — export parity', () => {
       const buildExports = await page.textContent('#result')
       expect(buildExports).not.toContain('ERROR')
 
-      // They should export the same names
+      // Exports must match exactly between dev and build
       expect(devExports).toBe(buildExports)
     })
   }

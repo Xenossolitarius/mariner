@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './setup'
 
 // Snapshot tests for the rendered HTML of each app.
 // Captures the DOM after mounting and compares against stored snapshots.
@@ -233,7 +233,7 @@ test.describe('HTML snapshots — dev vs build parity', () => {
       results.push((await page.textContent('#result'))!)
     }
 
-    // Dev and build should produce identical export shapes
+    // Exports must match exactly between dev and build
     expect(results[0]).toBe(results[1])
   })
 })

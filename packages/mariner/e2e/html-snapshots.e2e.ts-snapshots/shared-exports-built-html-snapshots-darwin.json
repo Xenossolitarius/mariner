@@ -1,19 +1,4 @@
 {
-  "MutationType": "object",
-  "PiniaVuePlugin": "function",
-  "acceptHMRUpdate": "function",
-  "createPinia": "function",
-  "defineStore": "function",
-  "getActivePinia": "function",
-  "mapActions": "function",
-  "mapGetters": "function",
-  "mapState": "function",
-  "mapStores": "function",
-  "mapWritableState": "function",
   "pinia": "object",
-  "setActivePinia": "function",
-  "setMapStoreSuffix": "function",
-  "skipHydrate": "function",
-  "storeToRefs": "function",
   "useCounter": "function"
 }

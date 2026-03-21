@@ -13,5 +13,3 @@ export const useCounter = defineStore('counter', {
     },
   },
 })
-
-export * from 'pinia'

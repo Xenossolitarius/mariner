@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './setup'
 
 // E2E tests for the Mariner dev server.
 // The dev server is started automatically by playwright.config.ts webServer on port 3000.
