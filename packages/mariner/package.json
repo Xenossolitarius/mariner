@@ -41,14 +41,17 @@
     "*": {
       "navigator": [
         "./dist/navigator/index.d.ts"
+      ],
+      "plugins": [
+        "./dist/server/plugins/index.d.ts"
       ]
     }
   },
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
-    "dist",
-    "dist/navigator",
-    "dist/cli",
-    "dist/server"
+    "dist"
   ],
   "scripts": {
     "start": "tsx ./src/cli/main.ts",
@@ -68,24 +71,20 @@
     "test:e2e:built": "playwright test --project=built-client"
   },
   "dependencies": {
-    "@rollup/pluginutils": "^5.1.0",
     "ajv": "^8.14.0",
+    "defu": "^6.1.4",
     "boxen": "^8.0.1",
     "chalk": "^5.6.2",
     "commander": "^14.0.3",
-    "esbuild": "^0.20.2",
     "glob": "^10.4.1",
     "inquirer": "^13.3.2",
     "node-forge": "^1.3.1",
     "ora": "^9.3.0",
-    "vite": "^5.2.12",
     "vite-plugin-css-injected-by-js": "^3.5.1",
     "vite-plugin-dts": "^3.9.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/glob": "^8.1.0",
-    "@types/inquirer": "^9.0.9",
     "@types/node-forge": "^1.3.14",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -95,7 +94,6 @@
     "vue": "^3.4.27"
   },
   "peerDependencies": {
-    "defu": "^6.1.4",
     "vite": "^5.2.12"
   }
 }
