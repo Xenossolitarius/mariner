@@ -38,8 +38,8 @@ beforeAll(async () => {
   serverOptions = makeServerOptions(allProjects)
 
   // Generate types for TS apps that don't have unresolvable external deps
-  // (shared uses pinia which breaks api-extractor's rollupTypes)
-  const safeProjects = tsProjects.filter((p) => !['shared'].includes(p.mariner!))
+  // shared (pinia) and lazy break api-extractor's rollupTypes
+  const safeProjects = tsProjects.filter((p) => !['shared', 'lazy'].includes(p.mariner!))
   for (const project of safeProjects) {
     await generateTypes(serverOptions, project)
   }

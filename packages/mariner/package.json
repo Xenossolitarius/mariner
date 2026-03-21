@@ -59,7 +59,7 @@
     "build": "unbuild",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude 'src/__build-integration__/**'",
-    "test:integration": "vitest run src/__build-integration__/",
+    "test:integration": "vitest run --fileParallelism=false src/__build-integration__/",
     "test:all": "vitest run",
     "test:coverage": "vitest run --coverage --exclude 'src/__build-integration__/**'",
     "test:watch": "vitest --exclude 'src/__build-integration__/**'"

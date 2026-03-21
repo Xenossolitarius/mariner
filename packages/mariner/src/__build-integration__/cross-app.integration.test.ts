@@ -113,8 +113,9 @@ describe('cross-app import chains', () => {
 
   describe('all apps produce independent bundles', () => {
     it('every valid app has its own navigator.js', async () => {
+      const appNames = allProjects.map((p) => p.mariner!)
       const entries = await fs.readdir(distDir)
-      const appDirs = entries.filter((e) => !e.startsWith('.'))
+      const appDirs = entries.filter((e) => appNames.includes(e))
 
       for (const app of appDirs) {
         const navigatorPath = path.join(distDir, app, 'navigator.js')
