@@ -13,7 +13,6 @@ const schema: JSONSchemaType<FleetConfig> = {
     items: {
       type: 'string',
     },
-    required: [],
   },
   required: [],
 }

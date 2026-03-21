@@ -14,7 +14,7 @@ const examplePlugin = () => {
     },
 
     // use stored config in other hooks
-    transform(code, id) {
+    transform(_code, _id) {
       if (config.command === 'serve') {
         // dev: plugin invoked by dev server
       } else {

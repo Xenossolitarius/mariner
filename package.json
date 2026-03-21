@@ -6,7 +6,11 @@
   "scripts": {
     "clean:port": "sudo kill -9 $(sudo lsof -t -i:3000)",
     "clean:node": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "typecheck": "pnpm --filter mariner-fe typecheck",
+    "test": "pnpm --filter mariner-fe test",
+    "test:coverage": "pnpm --filter mariner-fe test:coverage",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
     "client:index": "http-server ./playground/client/index",
     "client:build": "http-server ./playground/dist --port 3000 --cors"
   },
@@ -14,24 +18,24 @@
     "mariner-fe": "workspace:*"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@eslint/js": "^10.0.0",
     "defu": "^6.1.4",
     "dotenv": "^16.4.5",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
+    "eslint": "^10.0.0",
+    "eslint-plugin-prettier": "^5.2.3",
     "lodash": "^4.17.21",
     "prettier": "^3.2.5",
     "tsx": "^4.11.0",
     "typescript": "^5.4.5",
+    "typescript-eslint": "^8.27.0",
     "vite": "^5.2.12"
   },
   "devDependencies": {
     "@types/node": "^20.13.0",
     "http-server": "^14.1.1",
     "nodemon": "^3.1.2",
-    "unbuild": "^2.0.0"
+    "unbuild": "^2.0.0",
+    "vitest": "^2.1.9"
   },
   "keywords": [],
   "author": "Ivan Pešić",

@@ -37,11 +37,10 @@ export function resolveVirtualNavigators(base: string, options: ServerOptions): 
       resolvedConfig.plugins.push({
         name: 'vite-plugin-resolve-virtual-navigators-replace-idprefix',
         transform: (code: string) => {
-          let match: RegExpExecArray | null = null
           let result = code
+          let match: RegExpExecArray | null
 
           while ((match = navigatorImportsRegex.exec(code)) !== null) {
-            if (!match) break
             result = result.replace(
               new RegExp(`${base}${VALID_ID_PREFIX}${NAVIGATOR_MODULE_PREFIX}${match[2]}`, 'g'),
               `/${match[2]}/navigator.js`,
