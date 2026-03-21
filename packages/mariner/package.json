@@ -51,7 +51,8 @@
     "node": ">=18"
   },
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "scripts": {
     "start": "tsx ./src/cli/main.ts",

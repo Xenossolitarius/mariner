@@ -1,23 +1,21 @@
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig([
+  // Library entries (consumed by user code)
   {
     declaration: true,
-    entries: [
-      //core
-      { input: 'src/index' },
-      //navigator
-      { input: 'src/navigator/index' },
-      // workers
-      { input: 'src/server/build/worker' },
-      { input: 'src/server/generate-types/worker' },
-      // plugins
-      { input: 'src/server/plugins/index' },
-    ],
+    entries: [{ input: 'src/index' }, { input: 'src/navigator/index' }, { input: 'src/server/plugins/index' }],
     externals: ['vite', 'defu', 'vue', 'react', 'react-dom/client'],
   },
-  // cli
+  // Workers (internal, no types needed)
   {
+    declaration: false,
+    entries: [{ input: 'src/server/build/worker' }, { input: 'src/server/generate-types/worker' }],
+    externals: ['vite', 'defu', 'vue', 'react', 'react-dom/client'],
+  },
+  // CLI (standalone bundle, inline deps for portability)
+  {
+    declaration: false,
     rollup: {
       inlineDependencies: true,
       resolve: {
@@ -28,12 +26,18 @@ export default defineBuildConfig([
     externals: [
       'vite',
       'fsevents',
-      'node:url',
       'node:buffer',
-      'node:path',
       'node:child_process',
-      'node:process',
+      'node:crypto',
+      'node:fs',
+      'node:fs/promises',
+      'node:http',
+      'node:https',
       'node:os',
+      'node:path',
+      'node:process',
+      'node:url',
+      'node:worker_threads',
     ],
   },
 ])
