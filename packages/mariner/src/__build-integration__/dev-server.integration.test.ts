@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { createServer as createViteServer } from 'vite'
+import { createServer as createViteServer, type ViteDevServer } from 'vite'
 import { getMarinerSetup } from '../setup'
 import { resolveVirtualNavigators } from '../server/plugins/resolve-virtual-navigators'
 import type { ServerOptions } from '../server/server'
@@ -22,6 +22,26 @@ function makeServerOptions(projects: MarinerProject[]): ServerOptions {
   } as ServerOptions
 }
 
+async function createTestServer(project: MarinerProject): Promise<ViteDevServer> {
+  const config = project.configFile!.config
+  config.build = config.build ?? {}
+  config.build.rollupOptions = config.build.rollupOptions ?? {}
+  const base = `/${project.mariner}`
+
+  return createViteServer({
+    ...config,
+    appType: 'custom',
+    base,
+    mode: 'development',
+    configFile: false,
+    logLevel: 'silent',
+    root: project.root,
+    plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOptions)],
+    server: { middlewareMode: true },
+    optimizeDeps: { noDiscovery: true },
+  })
+}
+
 beforeAll(async () => {
   originalCwd = process.cwd()
   process.chdir(monorepoRoot)
@@ -39,19 +59,7 @@ describe('dev server integration', () => {
   describe('Vite dev server creation per app', () => {
     it('creates a Vite dev server for shared app in middleware mode', async () => {
       const project = allProjects.find((p) => p.mariner === 'shared')!
-      const config = project.configFile!.config
-      const base = `/${project.mariner}`
-
-      const server = await createViteServer({
-        ...config,
-        appType: 'custom',
-        base,
-        mode: 'development',
-        configFile: false,
-        root: project.root,
-        plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOptions)],
-        server: { middlewareMode: true },
-      })
+      const server = await createTestServer(project)
 
       expect(server).toBeDefined()
       expect(server.middlewares).toBeDefined()
@@ -61,19 +69,7 @@ describe('dev server integration', () => {
 
     it('creates a Vite dev server for React app (app3)', async () => {
       const project = allProjects.find((p) => p.mariner === 'app3')!
-      const config = project.configFile!.config
-      const base = `/${project.mariner}`
-
-      const server = await createViteServer({
-        ...config,
-        appType: 'custom',
-        base,
-        mode: 'development',
-        configFile: false,
-        root: project.root,
-        plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOptions)],
-        server: { middlewareMode: true },
-      })
+      const server = await createTestServer(project)
 
       expect(server).toBeDefined()
       await server.close()
@@ -81,21 +77,8 @@ describe('dev server integration', () => {
 
     it('middleware transforms navigator.ts to JS on request', async () => {
       const project = allProjects.find((p) => p.mariner === 'shared')!
-      const config = project.configFile!.config
-      const base = `/${project.mariner}`
+      const server = await createTestServer(project)
 
-      const server = await createViteServer({
-        ...config,
-        appType: 'custom',
-        base,
-        mode: 'development',
-        configFile: false,
-        root: project.root,
-        plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOptions)],
-        server: { middlewareMode: true },
-      })
-
-      // Request the navigator entry through the middleware
       const result = await server.transformRequest('/navigator.ts')
 
       expect(result).toBeDefined()
@@ -106,21 +89,8 @@ describe('dev server integration', () => {
 
     it('resolves navigator:shared as external in dev mode', async () => {
       const project = allProjects.find((p) => p.mariner === 'app1')!
-      const config = project.configFile!.config
-      const base = `/${project.mariner}`
+      const server = await createTestServer(project)
 
-      const server = await createViteServer({
-        ...config,
-        appType: 'custom',
-        base,
-        mode: 'development',
-        configFile: false,
-        root: project.root,
-        plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOptions)],
-        server: { middlewareMode: true },
-      })
-
-      // In dev mode, navigator:shared should resolve as external
       const resolved = await server.pluginContainer.resolveId('navigator:shared')
       expect(resolved).toBeDefined()
       expect(resolved!.external).toBe(true)
@@ -132,25 +102,11 @@ describe('dev server integration', () => {
   describe('multiple apps on same server', () => {
     it('creates middleware for multiple apps without conflicts', async () => {
       const apps = ['shared', 'app3']
-      const servers = []
+      const servers: ViteDevServer[] = []
 
       for (const appName of apps) {
         const project = allProjects.find((p) => p.mariner === appName)!
-        const config = project.configFile!.config
-        const base = `/${project.mariner}`
-
-        const server = await createViteServer({
-          ...config,
-          appType: 'custom',
-          base,
-          mode: 'development',
-          configFile: false,
-          root: project.root,
-          plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOptions)],
-          server: { middlewareMode: true },
-        })
-
-        servers.push(server)
+        servers.push(await createTestServer(project))
       }
 
       expect(servers).toHaveLength(2)

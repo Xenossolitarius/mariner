@@ -14,7 +14,8 @@ import path from 'node:path'
 
 const monorepoRoot = path.resolve(__dirname, '../../../..')
 const distDir = path.join(monorepoRoot, 'dist')
-const marinerDir = path.join(monorepoRoot, '.mariner')
+const testGenRoot = path.join(monorepoRoot, '.mariner-test-snap')
+const marinerDir = path.join(testGenRoot, '.mariner')
 let originalCwd: string
 let allProjects: MarinerProject[]
 
@@ -77,10 +78,12 @@ beforeAll(async () => {
     allProjects = setup.projects.filter((p) => p.isValid)
   }
 
-  // Generate types if needed
+  // Generate types into a temp dir so real .mariner/ is never touched
   const dtsExists = await fs.stat(path.join(marinerDir, 'mariner.d.ts')).catch(() => null)
   if (!dtsExists) {
-    await fs.rm(marinerDir, { recursive: true, force: true }).catch(() => {})
+    await fs.rm(testGenRoot, { recursive: true, force: true }).catch(() => {})
+    await fs.mkdir(testGenRoot, { recursive: true })
+    process.chdir(testGenRoot)
     const allValid = allProjects
     const tsProjects = allValid.filter((p) => !p.isJs)
     const opts = makeServerOptions(allValid)
@@ -89,11 +92,13 @@ beforeAll(async () => {
       await generateTypes(opts, project)
     }
     await generateMarinerTypeFile()
+    process.chdir(monorepoRoot)
   }
 }, 180000)
 
-afterAll(() => {
+afterAll(async () => {
   process.chdir(originalCwd)
+  await fs.rm(testGenRoot, { recursive: true, force: true }).catch(() => {})
 })
 
 describe('snapshot tests', () => {
