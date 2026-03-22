@@ -97,7 +97,10 @@ describe('select', () => {
   describe('--fleet flag', () => {
     it('filters projects by named fleet', async () => {
       const projects = [mockProject('app1'), mockProject('app2'), mockProject('app3')]
-      const fleet = { test: ['app1', 'app2'], prod: ['app1', 'app3'] }
+      const fleet = {
+        test: { apps: ['app1', 'app2'], mode: 'shared' as const },
+        prod: { apps: ['app1', 'app3'], mode: 'isolated' as const },
+      }
 
       const result = await select(makeSetup(projects, fleet), { fleet: 'test' } as never)
 
@@ -107,7 +110,10 @@ describe('select', () => {
 
     it('prompts for fleet selection when --fleet is true (no name)', async () => {
       const projects = [mockProject('app1'), mockProject('app2')]
-      const fleet = { test: ['app1'], prod: ['app2'] }
+      const fleet = {
+        test: { apps: ['app1'], mode: 'shared' as const },
+        prod: { apps: ['app2'], mode: 'isolated' as const },
+      }
 
       vi.mocked(inquirer.prompt).mockResolvedValue({ fleet: 'prod' })
 

@@ -1,3 +1,14 @@
 {
-  "test": ["app1", "app2"]
+  "test": {
+    "apps": ["app1", "app2"],
+    "mode": "isolated"
+  },
+  "shared-vue": {
+    "apps": ["app1", "app2", "shared"],
+    "mode": "shared"
+  },
+  "standalone": {
+    "apps": ["app3", "lazy", "js-test", "envs"],
+    "mode": "isolated"
+  }
 }

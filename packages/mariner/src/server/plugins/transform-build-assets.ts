@@ -3,6 +3,7 @@ import fs from 'fs/promises'
 import crypto from 'crypto'
 import path from 'node:path'
 import { ServerOptions } from '..'
+import type { MarinerProject } from '../../setup/setup'
 
 const HASH_LENGTH = 8
 
@@ -79,4 +80,72 @@ function isAssetFile(id: string) {
 
   // Check if the file matches the asset file pattern
   return assetFileRegex.test(id)
+}
+
+/**
+ * Shared fleet variant: determines the correct app base per asset by matching
+ * the file path against project roots.
+ */
+export const transformBuildAssetsShared = (projects: MarinerProject[], options: ServerOptions): Plugin => {
+  let publicDirPath = ''
+
+  const rootBasePath = options.commands.rootBase ? `/${options.commands.rootBase}` : ''
+
+  const findAppBase = (filePath: string): string => {
+    for (const project of projects) {
+      if (filePath.startsWith(project.root)) {
+        return `/${project.mariner}`
+      }
+    }
+    return '/chunks'
+  }
+
+  return {
+    name: 'mariner-transform-build-assets-shared',
+    enforce: 'pre',
+
+    configResolved({ publicDir }) {
+      publicDirPath = publicDir
+    },
+
+    async load(id) {
+      if (!isAssetFile(id)) return null
+
+      if (id.includes('vite:asset:public')) {
+        id = id.replace('vite:asset:public' + path.sep, '')
+        id = id.replace('\0', '')
+        id = path.join(publicDirPath, id)
+      }
+
+      let asset: Buffer
+      try {
+        asset = await fs.readFile(id)
+      } catch {
+        if (publicDirPath) {
+          try {
+            id = path.join(publicDirPath, id)
+            asset = await fs.readFile(id)
+          } catch {
+            return null
+          }
+        } else {
+          return null
+        }
+      }
+
+      const hash = generateHash(asset)
+      const extname = path.extname(id)
+      const basename = path.basename(id, extname)
+      const fileName = `${basename}.${hash}${extname}`
+      const base = findAppBase(id)
+
+      this.emitFile({
+        type: 'asset',
+        fileName: fileName,
+        source: asset,
+      })
+
+      return `export default import.meta.resolve("${rootBasePath}${base}/${fileName}");`
+    },
+  }
 }

@@ -44,6 +44,13 @@ export default defineConfig({
         baseURL: 'http://localhost:3000',
       },
     },
+    {
+      name: 'shared-fleet',
+      testMatch: 'shared-fleet.e2e.ts',
+      use: {
+        baseURL: 'http://localhost:3001',
+      },
+    },
   ],
   webServer: [
     {
@@ -58,6 +65,13 @@ export default defineConfig({
       port: 4173,
       reuseExistingServer: true,
       timeout: 10000,
+    },
+    {
+      command: `npx tsx ${cli} dev --all --fleet shared-vue --port 3001`,
+      cwd: monorepoRoot,
+      url: 'http://localhost:3001/shared-vue/shared/navigator.js',
+      reuseExistingServer: true,
+      timeout: 30000,
     },
   ],
 })

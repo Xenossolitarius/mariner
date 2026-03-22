@@ -115,12 +115,12 @@ describe('project discovery integration', () => {
     it('loads fleet config from fleet.config.json', async () => {
       const setup = await getMarinerSetup({ command: 'build', mode: 'production' })
 
-      // fleet.config.json exists in the root with {"test": ["app1", "app2"]}
+      // fleet.config.json exists in the root with test and shared-vue fleets
       expect(setup.global.fleet).toBeDefined()
       expect(setup.global.fleet).not.toBe(false)
 
       if (setup.global.fleet) {
-        expect(setup.global.fleet.test).toEqual(['app1', 'app2'])
+        expect(setup.global.fleet.test).toEqual({ apps: ['app1', 'app2'], mode: 'isolated' })
       }
     })
   })
@@ -143,10 +143,10 @@ describe('project discovery integration', () => {
       if (!fleet) return
 
       const testFleet = fleet.test
-      expect(testFleet).toEqual(['app1', 'app2'])
+      expect(testFleet.apps).toEqual(['app1', 'app2'])
 
       // Simulate fleet filtering (same logic as select.ts)
-      const filtered = setup.projects.filter((p) => p.mariner && testFleet.includes(p.mariner))
+      const filtered = setup.projects.filter((p) => p.mariner && testFleet.apps.includes(p.mariner))
 
       expect(filtered.length).toBe(2)
       expect(filtered.map((p) => p.mariner)).toContain('app1')

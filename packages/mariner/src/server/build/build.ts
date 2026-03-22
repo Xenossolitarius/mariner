@@ -7,6 +7,7 @@ import path from 'node:path'
 import { transformBuildAssets } from '../plugins/transform-build-assets'
 import cssInjectedByJs from 'vite-plugin-css-injected-by-js'
 import WorkerPool from '../worker-pool'
+import { buildSharedFleet } from './shared-build'
 
 export const buildNavigator = async (serverOps: ServerOptions, project: MarinerProject) => {
   const config = (await loadMarinerConfigFile(serverOps.commands, project.root))?.config
@@ -43,7 +44,22 @@ export const buildNavigator = async (serverOps: ServerOptions, project: MarinerP
 }
 
 export const createBuildServer = async (options: ServerOptions) => {
-  const pool = new WorkerPool('server/build/worker.mjs', options.commands.threads)
-  await Promise.all(options.projects.map((project) => pool.run({ options, project })))
-  pool.close()
+  if (options.fleetGroups) {
+    const pool = new WorkerPool('server/build/worker.mjs', options.commands.threads)
+
+    for (const group of options.fleetGroups) {
+      if (group.mode === 'shared') {
+        await buildSharedFleet(options, group)
+      } else {
+        await Promise.all(group.projects.map((project) => pool.run({ options, project })))
+      }
+    }
+
+    pool.close()
+  } else {
+    // Backward compat: no fleet groups, all isolated
+    const pool = new WorkerPool('server/build/worker.mjs', options.commands.threads)
+    await Promise.all(options.projects.map((project) => pool.run({ options, project })))
+    pool.close()
+  }
 }

@@ -14,7 +14,7 @@ import {
 
 export const select = async ({ projects, global }: MarinerOptions, options: ServerCommandOptions) => {
   if (options.all) {
-    if (options.fleet || options.navigator) {
+    if (options.navigator || options.fleet) {
       console.log(USING_ALL_IGNORING_SELECTION)
     }
 
@@ -30,7 +30,6 @@ export const select = async ({ projects, global }: MarinerOptions, options: Serv
     if (!global.fleet) {
       console.log(IGNORING_FLEET_NO_CONFIG)
     } else {
-      console.log(global.fleet)
       let fleet: string
       if (options.fleet === true) {
         const fleetSelection = [
@@ -38,8 +37,8 @@ export const select = async ({ projects, global }: MarinerOptions, options: Serv
             type: 'list',
             message: SELECT_FLEET,
             name: 'fleet',
-            choices: Object.entries(global.fleet).map(([name, projects]) => ({
-              name: `${name} - ${projects.join(', ')}`,
+            choices: Object.entries(global.fleet).map(([name, entry]) => ({
+              name: `${name} (${entry.mode}) - ${entry.apps.join(', ')}`,
               value: name,
             })),
           },
@@ -52,7 +51,7 @@ export const select = async ({ projects, global }: MarinerOptions, options: Serv
       }
 
       return projects.filter(
-        (project) => project.mariner && global.fleet && global.fleet?.[fleet].includes(project.mariner),
+        (project) => project.mariner && global.fleet && global.fleet?.[fleet].apps.includes(project.mariner),
       )
     }
   }

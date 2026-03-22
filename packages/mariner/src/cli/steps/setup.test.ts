@@ -55,12 +55,12 @@ describe('setup', () => {
   it('reports fleet config when present', async () => {
     vi.mocked(getMarinerSetup).mockResolvedValue({
       projects: [mockProject('app1')],
-      global: { fleet: { test: ['app1'] } },
+      global: { fleet: { test: { apps: ['app1'], mode: 'isolated' } } },
     })
 
     const result = await setup({ command: 'build', mode: 'production' } as never)
 
-    expect(result.global.fleet).toEqual({ test: ['app1'] })
+    expect(result.global.fleet).toEqual({ test: { apps: ['app1'], mode: 'isolated' } })
   })
 
   it('passes command and mode to getMarinerSetup', async () => {

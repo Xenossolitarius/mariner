@@ -35,7 +35,12 @@ describe('configure', () => {
     expect(mode).toHaveBeenCalledWith('development')
     expect(setup).toHaveBeenCalledWith(commands)
     expect(select).toHaveBeenCalledWith(setupData, commands)
-    expect(result).toEqual({ setup: setupData, projects: selectedProjects, commands })
+    expect(result).toEqual({
+      setup: setupData,
+      projects: selectedProjects,
+      commands,
+      fleetGroups: undefined,
+    })
   })
 
   it('passes commands through to the result', async () => {

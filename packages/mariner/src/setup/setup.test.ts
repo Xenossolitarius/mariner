@@ -183,11 +183,11 @@ describe('getMarinerProjects', () => {
 
 describe('getMarinerGlobals', () => {
   it('returns fleet config', async () => {
-    vi.mocked(getFleetConfig).mockResolvedValue({ test: ['app1'] })
+    vi.mocked(getFleetConfig).mockResolvedValue({ test: { apps: ['app1'], mode: 'isolated' } })
 
     const globals = await getMarinerGlobals()
 
-    expect(globals.fleet).toEqual({ test: ['app1'] })
+    expect(globals.fleet).toEqual({ test: { apps: ['app1'], mode: 'isolated' } })
   })
 
   it('returns null fleet when no config exists', async () => {

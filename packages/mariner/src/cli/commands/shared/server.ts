@@ -9,7 +9,9 @@ export const options = (program: Command) =>
     .option('-m, --mode <mode>', 'Specify the mariner mode')
     .option('-n, --navigator <navigator>', 'Specify single navigator')
     .option('-b, --rootBase <base>', 'Specify base path from which the navigators are served')
-    .option('-t, --threads <num>', 'Number of parallel threads (only build and generate', parseInt)
+    .option('-t, --threads <num>', 'Number of parallel threads (only build and generate', (v: string) =>
+      parseInt(v, 10),
+    )
     .option('-d, --debug', 'Debug (dev only)')
 
 // I almost went to ask Alice...

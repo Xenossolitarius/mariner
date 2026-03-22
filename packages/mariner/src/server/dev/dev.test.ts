@@ -27,9 +27,18 @@ vi.mock('../plugins/resolve-virtual-navigators', () => ({
   resolveVirtualNavigators: vi.fn().mockReturnValue({ name: 'mock-plugin' }),
 }))
 
+vi.mock('./shared-dev', () => ({
+  createSharedNavServers: vi
+    .fn()
+    .mockResolvedValue([
+      { base: '/fleet/app1', navigator: 'navigator.ts', vite: { middlewares: vi.fn() }, relativeRoot: 'app1' },
+    ]),
+}))
+
 import { createServer as createViteServer } from 'vite'
 import http from 'node:http'
 import { startHTTPSServer } from './https'
+import { createSharedNavServers } from './shared-dev'
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -52,6 +61,15 @@ function mockRoute(base: string, navigator = 'navigator.ts'): AppRoute {
   return {
     base,
     navigator,
+    vite: { middlewares: vi.fn() } as unknown as AppRoute['vite'],
+  }
+}
+
+function mockSharedRoute(base: string, relativeRoot: string, navigator = 'navigator.ts'): AppRoute {
+  return {
+    base,
+    navigator,
+    relativeRoot,
     vite: { middlewares: vi.fn() } as unknown as AppRoute['vite'],
   }
 }
@@ -219,6 +237,61 @@ describe('createHandler', () => {
       spy.mockRestore()
     })
   })
+
+  describe('shared fleet URL rewriting', () => {
+    it('rewrites navigator.js to /{fleet}/{relativeRoot}/{navigator}', () => {
+      const route = mockSharedRoute('/shared-vue/app1', 'playground/app1')
+      const handler = createHandler([route])
+      const req = mockReq('/shared-vue/app1/navigator.js')
+
+      handler(req, mockRes())
+
+      expect(req.url).toBe('/shared-vue/playground/app1/navigator.ts')
+      expect(route.vite.middlewares).toHaveBeenCalled()
+    })
+
+    it('rewrites non-navigator paths to /{fleet}/{relativeRoot}/...', () => {
+      const route = mockSharedRoute('/shared-vue/app1', 'playground/app1')
+      const handler = createHandler([route])
+      const req = mockReq('/shared-vue/app1/src/App.vue')
+
+      handler(req, mockRes())
+
+      expect(req.url).toBe('/shared-vue/playground/app1/src/App.vue')
+    })
+
+    it('rewrites to / when request matches shared fleet base exactly', () => {
+      const route = mockSharedRoute('/shared-vue/app1', 'playground/app1')
+      const handler = createHandler([route])
+      const req = mockReq('/shared-vue/app1')
+
+      handler(req, mockRes())
+
+      expect(req.url).toBe('/shared-vue/playground/app1/')
+    })
+  })
+
+  describe('fleet-level routing', () => {
+    it('forwards fleet-level requests to the shared Vite instance', () => {
+      const route = mockSharedRoute('/shared-vue/app1', 'playground/app1')
+      const handler = createHandler([route])
+      const req = mockReq('/shared-vue/@vite/client')
+
+      handler(req, mockRes())
+
+      expect(route.vite.middlewares).toHaveBeenCalled()
+    })
+
+    it('returns 404 when no fleet or app route matches', () => {
+      const route = mockSharedRoute('/shared-vue/app1', 'playground/app1')
+      const handler = createHandler([route])
+      const res = mockRes()
+
+      handler(mockReq('/unknown-fleet/something'), res)
+
+      expect(res.writeHead).toHaveBeenCalledWith(404)
+    })
+  })
 })
 
 describe('getServerUrl', () => {
@@ -303,7 +376,7 @@ describe('createNavServer', () => {
 
     expect(createViteServer).toHaveBeenCalledWith(
       expect.objectContaining({
-        server: expect.objectContaining({ hmr: expect.objectContaining({ port: 6006 }) }),
+        server: expect.objectContaining({ hmr: expect.objectContaining({ port: 5 }) }),
       }),
     )
   })
@@ -362,5 +435,70 @@ describe('createDevServer', () => {
     await createDevServer(opts)
 
     expect(createViteServer).toHaveBeenCalledTimes(3)
+  })
+
+  it('handles fleet groups with shared mode', async () => {
+    const opts = makeOptions([makeProject('app1')]) as ServerOptions
+    opts.fleetGroups = [{ name: 'shared-vue', mode: 'shared', projects: [makeProject('app1'), makeProject('app2')] }]
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await createDevServer(opts)
+
+    expect(createSharedNavServers).toHaveBeenCalledTimes(1)
+    expect(createSharedNavServers).toHaveBeenCalledWith(opts, opts.fleetGroups[0], 10001)
+  })
+
+  it('handles fleet groups with isolated mode', async () => {
+    const projects = [makeProject('app1'), makeProject('app2')]
+    const opts = makeOptions(projects) as ServerOptions
+    opts.fleetGroups = [{ name: 'test', mode: 'isolated', projects }]
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await createDevServer(opts)
+
+    expect(createSharedNavServers).not.toHaveBeenCalled()
+    expect(createViteServer).toHaveBeenCalledTimes(2)
+  })
+
+  it('handles mixed fleet groups (shared + isolated)', async () => {
+    const sharedProjects = [makeProject('app1'), makeProject('app2')]
+    const isolatedProjects = [makeProject('app3')]
+    const opts = makeOptions([...sharedProjects, ...isolatedProjects]) as ServerOptions
+    opts.fleetGroups = [
+      { name: 'shared-vue', mode: 'shared', projects: sharedProjects },
+      { name: 'standalone', mode: 'isolated', projects: isolatedProjects },
+    ]
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await createDevServer(opts)
+
+    expect(createSharedNavServers).toHaveBeenCalledTimes(1)
+    expect(createViteServer).toHaveBeenCalledTimes(1) // only the isolated app3
+  })
+
+  it('increments HMR port counter correctly across fleet groups', async () => {
+    const sharedProjects = [makeProject('app1')]
+    const isolatedProjects = [makeProject('app3'), makeProject('app4')]
+    const opts = makeOptions([], { port: 3000 }) as ServerOptions
+    opts.fleetGroups = [
+      { name: 'shared-vue', mode: 'shared', projects: sharedProjects },
+      { name: 'standalone', mode: 'isolated', projects: isolatedProjects },
+    ]
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+
+    await createDevServer(opts)
+
+    // shared group uses port 10001, then counter becomes 10002
+    // isolated group uses 10002 and 10003
+    expect(createViteServer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        server: expect.objectContaining({ hmr: expect.objectContaining({ port: 10002 }) }),
+      }),
+    )
+    expect(createViteServer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        server: expect.objectContaining({ hmr: expect.objectContaining({ port: 10003 }) }),
+      }),
+    )
   })
 })
