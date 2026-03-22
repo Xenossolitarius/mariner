@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+import { useCargo } from 'mariner-fe/navigator'
+
+const cargo = useCargo<{ greeting: string; features: { darkMode: boolean } }>()
 </script>
 
 <template>
   <div>
     <div>APP 1</div>
     <div>APP 11111</div>
+    <div data-testid="cargo-greeting">{{ cargo?.greeting }}</div>
+    <div data-testid="cargo-features">darkMode: {{ cargo?.features?.darkMode }}</div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
     </a>

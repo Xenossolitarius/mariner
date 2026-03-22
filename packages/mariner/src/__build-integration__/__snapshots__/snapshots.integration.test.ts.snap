@@ -113,6 +113,8 @@ exports[`snapshot tests > mariner.d.ts type definitions > matches snapshot 1`] =
 
   import { Navigator as Navigator_2 } from 'mariner-fe/navigator';
   
+  export const cargo: any;
+  
   const navigator_2: Navigator_2;
   export { navigator_2 as navigator }
   

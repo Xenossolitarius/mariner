@@ -6,6 +6,7 @@ import { createServer } from '../../server'
 
 serverOptions(program.command('build'))
   .description('Build Micro Frontends')
+  .option('--ssr', 'Build for SSR mode (cargo runs per-request on the serve server)')
   .action(async (options) => {
     const serverOptions = await configure({
       command: 'build',

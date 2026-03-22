@@ -18,7 +18,7 @@ export type DevCommandOptions = {
 }
 
 export type BuildCommandOptions = {
-  // on build
+  ssr?: true
 }
 
 export const createServer = (options: ServerOptions) => {

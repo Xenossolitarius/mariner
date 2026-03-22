@@ -51,6 +51,13 @@ export default defineConfig({
         baseURL: 'http://localhost:3001',
       },
     },
+    {
+      name: 'cargo-serve',
+      testMatch: 'cargo-serve.e2e.ts',
+      use: {
+        baseURL: 'http://localhost:4200',
+      },
+    },
   ],
   webServer: [
     {
@@ -72,6 +79,13 @@ export default defineConfig({
       url: 'http://localhost:3001/shared-vue/shared/navigator.js',
       reuseExistingServer: true,
       timeout: 30000,
+    },
+    {
+      command: `npx tsx ${path.join(monorepoRoot, 'packages/mariner/e2e/serve-entry.ts')}`,
+      cwd: monorepoRoot,
+      port: 4200,
+      reuseExistingServer: true,
+      timeout: 120000,
     },
   ],
 })

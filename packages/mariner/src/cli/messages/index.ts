@@ -24,6 +24,19 @@ export const STARTING_DEV_SERVER = chalk.cyan.bold('Starting dev server...')
 
 export const STARTING_BUILD = chalk.cyan.bold('Building...')
 
+export const STARTING_SERVE = chalk.cyan.bold('Starting production server...')
+
+export const SERVE_READY = (url: string, navigators: string[]) => {
+  const apps = navigators.map((n) => `  ${chalk.green('➜')} ${chalk.bold(n)}`).join('\n')
+  return boxen(`${chalk.green.bold(url)}\n\n${chalk.dim('Navigators:')}\n${apps}`, {
+    padding: 1,
+    borderColor: 'cyan',
+    borderStyle: 'round',
+    title: 'Mariner Serve',
+    titleAlignment: 'center',
+  })
+}
+
 export const GENERATING_TYPES = chalk.cyan.bold('Generating types...')
 
 export const SELECTED_MODE_MESSAGE = (mode?: string) => mode && chalk.cyan(`Selected mode: ${mode}`)

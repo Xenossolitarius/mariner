@@ -5,6 +5,7 @@ import { ServerOptions } from '../server'
 import { getServerUrl, type AppRoute } from './dev'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigatorsShared } from '../plugins/resolve-virtual-navigators'
+import { resolveCargo } from '../plugins/resolve-cargo'
 import { findCommonRoot } from '../utils/common-root'
 import { loadMarinerConfigFile } from '../../setup/utils'
 import type { ResolvedFleetGroup } from '../../setup/types'
@@ -111,6 +112,7 @@ export const createSharedNavServers = async (
       ...mergedPlugins,
       resolveVirtualNavigatorsShared(group.projects, serverOps),
       resolveSharedPublicAssets(group.projects, commonRoot),
+      resolveCargo({ projects: group.projects }),
     ],
     optimizeDeps: { entries: navigatorEntries },
     server: {

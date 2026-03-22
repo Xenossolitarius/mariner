@@ -6,6 +6,7 @@ import { DEV_SERVER_DEFAULTS } from '.'
 import { MarinerProject } from '../..'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
+import { resolveCargo } from '../plugins/resolve-cargo'
 import { startHTTPSServer } from './https'
 import { SERVER_READY } from '../../cli/messages'
 import { createSharedNavServers } from './shared-dev'
@@ -47,7 +48,11 @@ export const createNavServer = async (
     envPrefix: MARINER_ENV_PREFIX,
     configFile: false,
     root: project.root,
-    plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps)],
+    plugins: [
+      ...(config.plugins || []),
+      resolveVirtualNavigators(base, serverOps),
+      resolveCargo({ projects: [project] }),
+    ],
     optimizeDeps: { entries: [navigatorEntry] },
     server: {
       middlewareMode: true,

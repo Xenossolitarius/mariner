@@ -57,6 +57,7 @@ test.describe('screenshots', () => {
     `)
 
     await expect(page.getByText('APP 1', { exact: true })).toBeVisible({ timeout: 30000 })
+    await expect(page.locator('[data-testid="cargo-greeting"]')).toContainText('Hello from server', { timeout: 15000 })
     await expect(page.locator('#app2')).not.toBeEmpty({ timeout: 30000 })
     await expect(page.locator('#app3 h1')).toContainText('Vite + React', { timeout: 30000 })
 

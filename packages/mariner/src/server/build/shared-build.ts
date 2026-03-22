@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import { ServerOptions } from '../server'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigatorsShared } from '../plugins/resolve-virtual-navigators'
+import { resolveCargo } from '../plugins/resolve-cargo'
 import { transformBuildAssetsShared } from '../plugins/transform-build-assets'
 import { findCommonRoot } from '../utils/common-root'
 import { loadMarinerConfigFile } from '../../setup/utils'
@@ -97,6 +98,7 @@ export const buildSharedFleet = async (serverOps: ServerOptions, group: Resolved
       ...mergedPlugins,
       cssInjectedByJs(),
       resolveVirtualNavigatorsShared(group.projects, serverOps),
+      resolveCargo({ projects: group.projects }),
       transformBuildAssetsShared(group.projects, serverOps),
     ],
     build: {
