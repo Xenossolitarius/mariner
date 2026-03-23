@@ -1,6 +1,9 @@
 import { test, expect } from './setup'
+import { mountPage } from './helpers'
 
 const DEV = 'http://localhost:3001/shared-vue'
+
+const twMount = () => mountPage([{ id: 'tw-app', url: `${DEV}/tailwind-vue/navigator.js` }])
 
 test.describe('tailwind-vue — navigator serving', () => {
   test('serves tailwind-vue navigator.js as ESM', async ({ request }) => {
@@ -21,32 +24,14 @@ test.describe('tailwind-vue — navigator serving', () => {
 
 test.describe('tailwind-vue — Vue app in browser', () => {
   test('mounts and renders heading', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     await expect(page.locator('[data-testid="tw-heading"]')).toContainText('Tailwind Vue', { timeout: 15000 })
     await expect(page.locator('[data-testid="tw-subtitle"]')).toContainText('Tailwind CSS 4')
   })
 
   test('counter button increments on click', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     const button = page.locator('[data-testid="tw-counter"]')
     await expect(button).toContainText('Count is 0', { timeout: 15000 })
@@ -59,16 +44,7 @@ test.describe('tailwind-vue — Vue app in browser', () => {
   })
 
   test('all three cards render', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     await expect(page.locator('[data-testid="tw-card-1"]')).toContainText('Card 1', { timeout: 15000 })
     await expect(page.locator('[data-testid="tw-card-2"]')).toContainText('Card 2')
@@ -78,16 +54,7 @@ test.describe('tailwind-vue — Vue app in browser', () => {
 
 test.describe('tailwind-vue — shared navigator integration', () => {
   test('shared pinia store is accessible and functional', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     const sharedButton = page.locator('[data-testid="tw-shared-counter"]')
     await expect(sharedButton).toContainText('Shared count is 0', { timeout: 15000 })
@@ -100,16 +67,7 @@ test.describe('tailwind-vue — shared navigator integration', () => {
   })
 
   test('local and shared counters are independent', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     const localButton = page.locator('[data-testid="tw-counter"]')
     const sharedButton = page.locator('[data-testid="tw-shared-counter"]')
@@ -117,12 +75,10 @@ test.describe('tailwind-vue — shared navigator integration', () => {
     await expect(localButton).toContainText('Count is 0', { timeout: 15000 })
     await expect(sharedButton).toContainText('Shared count is 0')
 
-    // Click local 3 times
     await localButton.click()
     await localButton.click()
     await localButton.click()
 
-    // Click shared once
     await sharedButton.click()
 
     await expect(localButton).toContainText('Count is 3')
@@ -130,30 +86,19 @@ test.describe('tailwind-vue — shared navigator integration', () => {
   })
 
   test('shared store state persists across navigators on same page', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <div id="app1"></div>
-      <script type="module">
-        const [{ navigator: twNav }, { navigator: app1Nav }] = await Promise.all([
-          import('${DEV}/tailwind-vue/navigator.js'),
-          import('${DEV}/app1/navigator.js'),
-        ])
-        twNav.mount('#tw-app')
-        app1Nav.mount('#app1')
-      </script>
-    `)
+    await page.setContent(
+      mountPage([
+        { id: 'tw-app', url: `${DEV}/tailwind-vue/navigator.js` },
+        { id: 'app1', url: `${DEV}/app1/navigator.js` },
+      ]),
+    )
 
-    // Click shared counter in tailwind-vue
     const twSharedButton = page.locator('[data-testid="tw-shared-counter"]')
     await expect(twSharedButton).toBeVisible({ timeout: 15000 })
 
     await twSharedButton.click()
     await twSharedButton.click()
 
-    // app1's shared store counter should reflect the same value
     const app1SharedButton = page.locator('#app1 button', { hasText: 'Shared store count is' })
     await expect(app1SharedButton).toContainText('Shared store count is 2')
   })
@@ -161,90 +106,48 @@ test.describe('tailwind-vue — shared navigator integration', () => {
 
 test.describe('tailwind-vue — Tailwind CSS 4 styles', () => {
   test('CSS is injected and Tailwind classes are applied', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     const heading = page.locator('[data-testid="tw-heading"]')
     await expect(heading).toBeVisible({ timeout: 15000 })
 
-    // text-4xl should set a large font size
     const fontSize = await heading.evaluate((el) => getComputedStyle(el).fontSize)
-    const fontSizeNum = parseFloat(fontSize)
-    expect(fontSizeNum).toBeGreaterThanOrEqual(28)
+    expect(parseFloat(fontSize)).toBeGreaterThanOrEqual(28)
 
-    // font-bold should set font weight 700
     const fontWeight = await heading.evaluate((el) => getComputedStyle(el).fontWeight)
     expect(Number(fontWeight)).toBeGreaterThanOrEqual(700)
   })
 
-  test('bg-red-400 badge has red background', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+  test('bg-red-400 badge has non-transparent background', async ({ page }) => {
+    await page.setContent(twMount())
 
     const badge = page.locator('[data-testid="tw-badge"]')
     await expect(badge).toBeVisible({ timeout: 15000 })
 
     // Tailwind 4 uses oklch colors — verify the badge has a non-transparent background
     const bg = await badge.evaluate((el) => getComputedStyle(el).backgroundColor)
-    // Should not be transparent or empty — any valid color value means Tailwind is working
     expect(bg).not.toBe('rgba(0, 0, 0, 0)')
     expect(bg).not.toBe('transparent')
     expect(bg.length).toBeGreaterThan(0)
   })
 
   test('grid layout is applied to cards', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     const card1 = page.locator('[data-testid="tw-card-1"]')
     await expect(card1).toBeVisible({ timeout: 15000 })
 
-    // grid-cols-3 should make the parent a grid container
     const parentDisplay = await card1.evaluate((el) => getComputedStyle(el.parentElement!).display)
     expect(parentDisplay).toBe('grid')
   })
 
   test('rounded-lg is applied to buttons', async ({ page }) => {
-    await page.setContent(`
-      <script type="importmap">
-        { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-      </script>
-      <div id="tw-app"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/tailwind-vue/navigator.js')
-        navigator.mount('#tw-app')
-      </script>
-    `)
+    await page.setContent(twMount())
 
     const button = page.locator('[data-testid="tw-counter"]')
     await expect(button).toBeVisible({ timeout: 15000 })
 
     const borderRadius = await button.evaluate((el) => getComputedStyle(el).borderRadius)
-    // rounded-lg should produce 8px border radius
     expect(parseFloat(borderRadius)).toBeGreaterThanOrEqual(8)
   })
 })

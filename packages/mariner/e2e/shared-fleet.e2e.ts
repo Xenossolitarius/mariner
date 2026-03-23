@@ -1,5 +1,6 @@
 import { test, expect } from './setup'
 import path from 'node:path'
+import { VUE_IMPORTMAP, reactPreamble, mountPage, probePage, SCREENSHOT_STYLES } from './helpers'
 
 // E2E tests for the shared fleet mode — mirrors the dev-server and screenshot tests
 // but runs against a server where app1, tailwind-vue, shared are in a shared Vite instance.
@@ -9,24 +10,9 @@ import path from 'node:path'
 // with: --all --fleet shared-vue
 
 const DEV = 'http://localhost:3001'
-const FLEET = `${DEV}/shared-vue` // shared fleet apps are served under the fleet name
+const FLEET = `${DEV}/shared-vue`
+const REACT_PREAMBLE = reactPreamble(DEV)
 const screenshotsDir = path.join(import.meta.dirname, 'screenshots')
-
-const VUE_PREAMBLE = `
-  <script type="importmap">
-    { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-  </script>
-`
-
-const REACT_PREAMBLE = `
-  <script type="module">
-    import RefreshRuntime from '${DEV}/app3/@react-refresh'
-    RefreshRuntime.injectIntoGlobalHook(window)
-    window.$RefreshReg$ = () => {}
-    window.$RefreshSig$ = () => (type) => type
-    window.__vite_plugin_react_preamble_installed__ = true
-  </script>
-`
 
 test.describe('shared fleet — navigator serving', () => {
   test('serves shared navigator.js as ESM', async ({ request }) => {
@@ -111,21 +97,13 @@ test.describe('shared fleet — asset serving', () => {
 
 test.describe('shared fleet — cross-app imports in browser', () => {
   test('shared navigator exports pinia store', async ({ page }) => {
-    await page.setContent(`
-      ${VUE_PREAMBLE}
-      <div id="result"></div>
-      <script type="module">
-        try {
-          const { pinia, useCounter } = await import('${FLEET}/shared/navigator.js')
-          const results = []
-          results.push('pinia:' + typeof pinia)
-          results.push('useCounter:' + typeof useCounter)
-          document.getElementById('result').textContent = results.join('|')
-        } catch(e) {
-          document.getElementById('result').textContent = 'ERROR:' + e.message
-        }
-      </script>
-    `)
+    await page.setContent(
+      probePage(
+        VUE_IMPORTMAP,
+        `${FLEET}/shared/navigator.js`,
+        `['pinia:' + typeof mod.pinia, 'useCounter:' + typeof mod.useCounter].join('|')`,
+      ),
+    )
 
     await page.waitForSelector('#result:not(:empty)', { timeout: 10000 })
     const text = await page.textContent('#result')
@@ -134,18 +112,7 @@ test.describe('shared fleet — cross-app imports in browser', () => {
   })
 
   test('app1 navigator loads and exports navigator object', async ({ page }) => {
-    await page.setContent(`
-      ${VUE_PREAMBLE}
-      <div id="result"></div>
-      <script type="module">
-        try {
-          const mod = await import('${FLEET}/app1/navigator.js')
-          document.getElementById('result').textContent = typeof mod.navigator?.mount
-        } catch(e) {
-          document.getElementById('result').textContent = 'ERROR:' + e.message
-        }
-      </script>
-    `)
+    await page.setContent(probePage(VUE_IMPORTMAP, `${FLEET}/app1/navigator.js`, `typeof mod.navigator?.mount`))
 
     await page.waitForSelector('#result:not(:empty)', { timeout: 15000 })
     const text = await page.textContent('#result')
@@ -153,18 +120,7 @@ test.describe('shared fleet — cross-app imports in browser', () => {
   })
 
   test('React app3 navigator loads and exports navigator object (isolated)', async ({ page }) => {
-    await page.setContent(`
-      ${REACT_PREAMBLE}
-      <div id="result"></div>
-      <script type="module">
-        try {
-          const mod = await import('${DEV}/app3/navigator.js')
-          document.getElementById('result').textContent = typeof mod.navigator?.mount
-        } catch(e) {
-          document.getElementById('result').textContent = 'ERROR:' + e.message
-        }
-      </script>
-    `)
+    await page.setContent(probePage(REACT_PREAMBLE, `${DEV}/app3/navigator.js`, `typeof mod.navigator?.mount`))
 
     await page.waitForSelector('#result:not(:empty)', { timeout: 15000 })
     const text = await page.textContent('#result')
@@ -174,28 +130,14 @@ test.describe('shared fleet — cross-app imports in browser', () => {
 
 test.describe('shared fleet — Vue app in browser', () => {
   test('app1 (Vue) mounts and renders into DOM', async ({ page }) => {
-    await page.setContent(`
-      ${VUE_PREAMBLE}
-      <div id="app1"></div>
-      <script type="module">
-        const { navigator } = await import('${FLEET}/app1/navigator.js')
-        navigator.mount('#app1')
-      </script>
-    `)
+    await page.setContent(mountPage([{ id: 'app1', url: `${FLEET}/app1/navigator.js` }]))
 
     await expect(page.getByText('APP 1', { exact: true })).toBeVisible({ timeout: 15000 })
     await expect(page.locator('text=Vite + Vue')).toBeVisible()
   })
 
   test('app1 (Vue) counter button works with shared pinia store', async ({ page }) => {
-    await page.setContent(`
-      ${VUE_PREAMBLE}
-      <div id="app1"></div>
-      <script type="module">
-        const { navigator } = await import('${FLEET}/app1/navigator.js')
-        navigator.mount('#app1')
-      </script>
-    `)
+    await page.setContent(mountPage([{ id: 'app1', url: `${FLEET}/app1/navigator.js` }]))
 
     const localButton = page.locator('button', { hasText: 'count is' }).first()
     await expect(localButton).toBeVisible({ timeout: 15000 })
@@ -205,14 +147,7 @@ test.describe('shared fleet — Vue app in browser', () => {
   })
 
   test('app1 CSS is injected (scoped styles applied)', async ({ page }) => {
-    await page.setContent(`
-      ${VUE_PREAMBLE}
-      <div id="app1"></div>
-      <script type="module">
-        const { navigator } = await import('${FLEET}/app1/navigator.js')
-        navigator.mount('#app1')
-      </script>
-    `)
+    await page.setContent(mountPage([{ id: 'app1', url: `${FLEET}/app1/navigator.js` }]))
 
     await expect(page.getByText('APP 1', { exact: true })).toBeVisible({ timeout: 15000 })
 
@@ -223,20 +158,15 @@ test.describe('shared fleet — Vue app in browser', () => {
 
 test.describe('shared fleet — multi-app mounting', () => {
   test('two apps mount simultaneously without conflicts', async ({ page }) => {
-    await page.setContent(`
-      ${VUE_PREAMBLE}
-      ${REACT_PREAMBLE}
-      <div id="app1"></div>
-      <div id="app3"></div>
-      <script type="module">
-        const [{ navigator: nav1 }, { navigator: nav3 }] = await Promise.all([
-          import('${FLEET}/app1/navigator.js'),
-          import('${DEV}/app3/navigator.js'),
-        ])
-        nav1.mount('#app1')
-        nav3.mount('app3')
-      </script>
-    `)
+    await page.setContent(
+      mountPage(
+        [
+          { id: 'app1', url: `${FLEET}/app1/navigator.js` },
+          { id: 'app3', url: `${DEV}/app3/navigator.js`, type: 'react' },
+        ],
+        { reactDevUrl: DEV },
+      ),
+    )
 
     await expect(page.getByText('APP 1', { exact: true })).toBeVisible({ timeout: 15000 })
     await expect(page.locator('text=Vite + React')).toBeVisible({ timeout: 15000 })
@@ -244,13 +174,7 @@ test.describe('shared fleet — multi-app mounting', () => {
 
   test('unmounting an app removes its DOM content', async ({ page }) => {
     await page.setContent(`
-      <script type="module">
-        import RefreshRuntime from '${DEV}/app3/@react-refresh'
-        RefreshRuntime.injectIntoGlobalHook(window)
-        window.$RefreshReg$ = () => {}
-        window.$RefreshSig$ = () => (type) => type
-        window.__vite_plugin_react_preamble_installed__ = true
-      </script>
+      ${REACT_PREAMBLE}
       <div id="app3"></div>
       <div id="status"></div>
       <script type="module">
@@ -273,20 +197,9 @@ test.describe('shared fleet — multi-app mounting', () => {
 
 test.describe('shared fleet — app mounts in DOM', () => {
   test('app3 (React, isolated) mounts and renders into DOM', async ({ page }) => {
-    await page.setContent(`
-      <script type="module">
-        import RefreshRuntime from '${DEV}/app3/@react-refresh'
-        RefreshRuntime.injectIntoGlobalHook(window)
-        window.$RefreshReg$ = () => {}
-        window.$RefreshSig$ = () => (type) => type
-        window.__vite_plugin_react_preamble_installed__ = true
-      </script>
-      <div id="app3"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/app3/navigator.js')
-        navigator.mount('app3')
-      </script>
-    `)
+    await page.setContent(
+      mountPage([{ id: 'app3', url: `${DEV}/app3/navigator.js`, type: 'react' }], { reactDevUrl: DEV }),
+    )
 
     const heading = page.locator('h1')
     await expect(heading).toContainText('Vite + React', { timeout: 15000 })
@@ -296,20 +209,9 @@ test.describe('shared fleet — app mounts in DOM', () => {
   })
 
   test('app3 (React) button click updates count', async ({ page }) => {
-    await page.setContent(`
-      <script type="module">
-        import RefreshRuntime from '${DEV}/app3/@react-refresh'
-        RefreshRuntime.injectIntoGlobalHook(window)
-        window.$RefreshReg$ = () => {}
-        window.$RefreshSig$ = () => (type) => type
-        window.__vite_plugin_react_preamble_installed__ = true
-      </script>
-      <div id="app3"></div>
-      <script type="module">
-        const { navigator } = await import('${DEV}/app3/navigator.js')
-        navigator.mount('app3')
-      </script>
-    `)
+    await page.setContent(
+      mountPage([{ id: 'app3', url: `${DEV}/app3/navigator.js`, type: 'react' }], { reactDevUrl: DEV }),
+    )
 
     const button = page.locator('button')
     await expect(button).toContainText('count is 0', { timeout: 15000 })
@@ -328,13 +230,9 @@ test.describe('shared fleet — screenshots', () => {
 
   test('full page with all apps mounted', async ({ page }) => {
     await page.setContent(`
-      ${VUE_PREAMBLE}
+      ${VUE_IMPORTMAP}
       ${REACT_PREAMBLE}
-      <style>
-        body { margin: 0; font-family: system-ui, sans-serif; background: #242424; color: #fff; }
-        .app-section { padding: 2rem; border-bottom: 1px solid #333; }
-        .app-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
-      </style>
+      ${SCREENSHOT_STYLES}
       <div class="app-section">
         <div class="app-label">App 1 (Vue)</div>
         <div id="app1"></div>
@@ -363,7 +261,6 @@ test.describe('shared fleet — screenshots', () => {
     await expect(page.locator('[data-testid="tw-heading"]')).toContainText('Tailwind Vue', { timeout: 30000 })
     await expect(page.locator('#app3 h1')).toContainText('Vite + React', { timeout: 30000 })
 
-    // Brief wait for rendering to settle then capture
     await page.waitForTimeout(1000)
     await page.evaluate(() => document.fonts.ready.catch(() => {}))
     const buffer = await page.screenshot({ type: 'jpeg', quality: 90, fullPage: true })

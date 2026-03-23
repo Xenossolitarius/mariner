@@ -8,14 +8,10 @@ import { test, expect } from './setup'
 // Serve mode (port 4200): serve server runs cargo per-request,
 // injects __MARINER_CARGO__ const into the navigator response.
 
+import { VUE_IMPORTMAP } from './helpers'
+
 const DEV = 'http://localhost:3000'
 const SERVE = 'http://localhost:4200'
-
-const VUE_IMPORTMAP = `
-  <script type="importmap">
-    { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-  </script>
-`
 
 test.describe('cargo — dev mode (virtual module)', () => {
   test('app1 navigator.js imports from virtual cargo module', async ({ request }) => {

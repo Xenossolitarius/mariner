@@ -1,37 +1,19 @@
 import { test, expect } from './setup'
 import path from 'node:path'
+import { VUE_IMPORTMAP, reactPreamble, SCREENSHOT_STYLES } from './helpers'
 
 const DEV = 'http://localhost:3000'
+const REACT_PREAMBLE = reactPreamble(DEV)
 const screenshotsDir = path.join(import.meta.dirname, 'screenshots')
-
-const VUE_PREAMBLE = `
-  <script type="importmap">
-    { "imports": { "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js" } }
-  </script>
-`
-
-const REACT_PREAMBLE = `
-  <script type="module">
-    import RefreshRuntime from '${DEV}/app3/@react-refresh'
-    RefreshRuntime.injectIntoGlobalHook(window)
-    window.$RefreshReg$ = () => {}
-    window.$RefreshSig$ = () => (type) => type
-    window.__vite_plugin_react_preamble_installed__ = true
-  </script>
-`
 
 test.use({ viewport: { width: 1024, height: 1024 } })
 
 test.describe('screenshots', () => {
   test('full page with all apps mounted', async ({ page }) => {
     await page.setContent(`
-      ${VUE_PREAMBLE}
+      ${VUE_IMPORTMAP}
       ${REACT_PREAMBLE}
-      <style>
-        body { margin: 0; font-family: system-ui, sans-serif; background: #242424; color: #fff; }
-        .app-section { padding: 2rem; border-bottom: 1px solid #333; }
-        .app-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
-      </style>
+      ${SCREENSHOT_STYLES}
       <div class="app-section">
         <div class="app-label">App 1 (Vue)</div>
         <div id="app1"></div>
