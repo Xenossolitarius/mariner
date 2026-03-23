@@ -14,6 +14,14 @@ export default defineConfig({
       { text: 'Guide', link: '/getting-started/' },
       { text: 'API Reference', link: '/api/' },
       { text: 'Examples', link: '/examples/vue-app' },
+      {
+        text: 'Links',
+        items: [
+          { text: 'GitHub', link: 'https://github.com/Xenossolitarius/mariner' },
+          { text: 'npm', link: 'https://www.npmjs.com/package/mariner-fe' },
+          { text: 'Changelog', link: 'https://github.com/Xenossolitarius/mariner/blob/main/CHANGELOG.md' },
+        ],
+      },
     ],
 
     sidebar: {
@@ -80,12 +88,12 @@ export default defineConfig({
       ],
     },
 
-    socialLinks: [{ icon: 'github', link: 'https://github.com/nicepkg/mariner' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/Xenossolitarius/mariner' }],
 
     search: { provider: 'local' },
 
     editLink: {
-      pattern: 'https://github.com/nicepkg/mariner/edit/main/docs/:path',
+      pattern: 'https://github.com/Xenossolitarius/mariner/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
 

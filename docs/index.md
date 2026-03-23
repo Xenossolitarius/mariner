@@ -14,7 +14,7 @@ hero:
       link: /api/
     - theme: alt
       text: GitHub
-      link: https://github.com/nicepkg/mariner
+      link: https://github.com/Xenossolitarius/mariner
 
 features:
   - title: Framework Agnostic
