@@ -4,7 +4,7 @@ Example microfrontend apps for testing and demonstrating Mariner.
 
 ## Apps
 
-- `app1/` — Vue 3 SPA (JS config), imports `navigator:shared` for pinia store, lazy-imports `navigator:lazy`
+- `app1/` — Vue 3 SPA (JS config), imports `navigator:shared` for pinia store, lazy-imports `navigator:lazy`. Has `cargo.ts` for server-side data injection demo (uses `useCargo()` in App.vue)
 - `app2/` — Vue 3 SPA with env vars (`.env`, `.env.test`), imports `navigator:shared` and `navigator:js-test`
 - `app3/` — React 18 app with `createReactNavigator`
 - `shared/` — Pinia store consumed by other apps via `navigator:shared`. Exports only `pinia` and `useCounter` (no wildcard re-export).
@@ -28,6 +28,7 @@ pnpm client:build    # Serve built output
 - `navigator.ts/js` — Entry point exporting the navigator
 - `package.json` — App dependencies (includes `mariner-fe: workspace:*`, `vite: ^8`)
 - `vite.config.ts` — Standard Vite config (uses `rolldownOptions` for Vite 8)
+- `cargo.ts` (optional) — Server-side data loader, exports `cargo = async () => ({ ... })`
 
 ## Cross-App Imports
 

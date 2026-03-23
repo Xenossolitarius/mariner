@@ -18,7 +18,9 @@ It provides a number of ways it can be used while maintaining performance, scale
 - 🌓 [Modes](#modes)
 - 🏠 [Local development](#local-development)
 - 🚧 [HMR](#hmr)
+- 📦 [Cargo (Server-Side Data)](#cargo)
 - 🔧 [Build](#build)
+- 🚀 [Serve](#serve)
 - 🧰 [Type Generation](#type-generation)
 - ❤️ [Contribute](#contribute)
 - ⚖️ [License](#license)
@@ -212,10 +214,92 @@ Also you can use this mechanism to override certain microfrontends and redirect 
 
 Hmr is available for most Vite supported frameworks although it requires a bit of manual setup (refer to playground) and launches one WS connection per micro app. It's WIP.
 
+## <a name="cargo">📦 Cargo (Server-Side Data)</a>
+
+Sometimes your microfrontend needs data that only exists on the server — API responses, feature flags, database values, environment config. Cargo is a simple way to get that data into your app without client-side fetching.
+
+### How it works
+
+1. Create a `cargo.ts` file next to your navigator
+2. Export a `cargo` function that returns whatever data you need
+3. Call `useCargo()` anywhere in your app — the data is already there
+
+### Step 1: Define your data
+
+Create `cargo.ts` in your microfrontend root (next to `navigator.ts`). This file runs on the server — you have full access to Node.js, databases, APIs, environment variables, anything.
+
+```ts
+/* cargo.ts */
+export const cargo = async () => {
+  const users = await fetch('https://api.example.com/users').then((r) => r.json())
+  return {
+    users,
+    buildTime: new Date().toISOString(),
+    features: { darkMode: true },
+  }
+}
+```
+
+### Step 2: Use the data
+
+Call `useCargo()` from anywhere in your app. It works in the navigator entry, Vue components, React components, or any nested module — there's no restriction on where you call it.
+
+```ts
+/* navigator.ts */
+import { useCargo } from 'mariner-fe/navigator'
+
+export const cargo = useCargo()
+```
+
+```vue
+<!-- src/App.vue — works in components too -->
+<script setup lang="ts">
+import { useCargo } from 'mariner-fe/navigator'
+
+const data = useCargo<{ users: User[]; features: { darkMode: boolean } }>()
+</script>
+
+<template>
+  <div v-if="data?.features.darkMode">Dark mode enabled</div>
+</template>
+```
+
+Every call to `useCargo()` in the same app returns the same data — it's a singleton per microfrontend.
+
+### When does the data load?
+
+Cargo adapts to how you're running Mariner:
+
+| How you run it                          | What happens                                                     |
+| --------------------------------------- | ---------------------------------------------------------------- |
+| `mariner dev`                           | Cargo runs fresh on every page reload during development         |
+| `mariner build`                         | Cargo runs once at build time — data is baked into the bundle    |
+| `mariner build --ssr` + `mariner serve` | Cargo runs on every request — data is always fresh in production |
+
+For most teams, the default dev and build modes are all you need. The SSR + serve mode is for when you need live data in production without rebuilding.
+
 ## <a name="build">🔧 Build </a>
 
 Build and type generation are done by node workers meaning they run in parallel. Mariner generally tries to decouple
 dependencies, runtime, build time as much as possible in dev and build. Although the dev server is inefficient to spawn as different processes the build and type generation benefit from parallelization. There is no golden number of threads so the CLI adds the `--threads` flag which enables you to fine tune performance for your fleet and CI/CD.
+
+## <a name="serve">🚀 Serve</a>
+
+If you need your microfrontends to serve fresh data on every request in production (not frozen at build time), Mariner ships a lightweight Node.js server.
+
+```bash
+mariner build --ssr    # Build navigators for server-side serving
+mariner serve          # Start the production server
+```
+
+The serve server does two things on each request:
+
+1. Runs your `cargo.ts` to get fresh data (API calls, database queries, feature flags)
+2. Serves the navigator bundle with that data already baked in
+
+This means your users get server-fresh data without any client-side loading spinners or waterfall requests. Each microfrontend gets its own data — there's no cross-contamination between apps.
+
+This also enables **independent deployment**: update one microfrontend's bundle without rebuilding the others. The serve server picks up changes automatically.
 
 ## <a name="type-generation">🧰 Type generation </a>
 

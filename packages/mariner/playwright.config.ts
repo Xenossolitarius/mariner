@@ -58,6 +58,13 @@ export default defineConfig({
         baseURL: 'http://localhost:4200',
       },
     },
+    {
+      name: 'tailwind-vue',
+      testMatch: 'tailwind-vue.e2e.ts',
+      use: {
+        baseURL: 'http://localhost:3001',
+      },
+    },
   ],
   webServer: [
     {

@@ -2,7 +2,7 @@ import { test, expect } from './setup'
 import path from 'node:path'
 
 // E2E tests for the shared fleet mode — mirrors the dev-server and screenshot tests
-// but runs against a server where app1, app2, shared are in a shared Vite instance.
+// but runs against a server where app1, tailwind-vue, shared are in a shared Vite instance.
 // app3, lazy, js-test, envs run isolated on the same server.
 //
 // The shared fleet dev server is started on port 3001 via playwright.config.ts webServer
@@ -72,7 +72,7 @@ test.describe('shared fleet — navigator serving', () => {
   })
 
   test('all fleet apps are routable under fleet prefix', async ({ request }) => {
-    const apps = ['app1', 'app2', 'shared']
+    const apps = ['app1', 'tailwind-vue', 'shared']
 
     for (const app of apps) {
       const response = await request.get(`/shared-vue/${app}/navigator.js`)
@@ -340,27 +340,27 @@ test.describe('shared fleet — screenshots', () => {
         <div id="app1"></div>
       </div>
       <div class="app-section">
-        <div class="app-label">App 2 (Vue)</div>
-        <div id="app2"></div>
+        <div class="app-label">Tailwind Vue</div>
+        <div id="tw-app"></div>
       </div>
       <div class="app-section">
         <div class="app-label">App 3 (React)</div>
         <div id="app3"></div>
       </div>
       <script type="module">
-        const [{ navigator: nav1 }, { navigator: nav2 }, { navigator: nav3 }] = await Promise.all([
+        const [{ navigator: nav1 }, { navigator: navTw }, { navigator: nav3 }] = await Promise.all([
           import('${FLEET}/app1/navigator.js'),
-          import('${FLEET}/app2/navigator.js'),
+          import('${FLEET}/tailwind-vue/navigator.js'),
           import('${DEV}/app3/navigator.js'),
         ])
         nav1.mount('#app1')
-        nav2.mount('#app2')
+        navTw.mount('#tw-app')
         nav3.mount('app3')
       </script>
     `)
 
     await expect(page.getByText('APP 1', { exact: true })).toBeVisible({ timeout: 30000 })
-    await expect(page.locator('#app2')).not.toBeEmpty({ timeout: 30000 })
+    await expect(page.locator('[data-testid="tw-heading"]')).toContainText('Tailwind Vue', { timeout: 30000 })
     await expect(page.locator('#app3 h1')).toContainText('Vite + React', { timeout: 30000 })
 
     // Brief wait for rendering to settle then capture

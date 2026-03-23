@@ -18,6 +18,7 @@ Open-source microfrontend framework built on Vite 8 (Rolldown). Framework-agnost
 - **Virtual Modules**: Apps import from other apps using `navigator:<appname>` syntax (e.g., `import { pinia } from 'navigator:shared'`)
 - **Fleet**: Groups of apps configured together in `fleet.config.json`
 - **Dep Isolation**: Each app gets its own Vite dev server, isolating dependencies so different apps can use different versions of the same dep
+- **Cargo**: Server-side data injection via `useCargo()` and `cargo.ts` files. Data is baked into navigator bundles at dev/build time or injected per-request by the serve server
 
 ## Commands
 
@@ -28,7 +29,7 @@ pnpm check                 # lint + typecheck + unit tests
 pnpm check:full            # check + integration tests + E2E tests
 pnpm lint                  # ESLint across entire project
 pnpm typecheck             # tsc --noEmit on mariner-fe
-pnpm test                  # Unit tests (fast, 250 tests)
+pnpm test                  # Unit tests (fast, 343 tests)
 pnpm test:coverage         # Unit tests with V8 coverage
 pnpm test:integration      # Build integration tests (needs `pnpm build` first)
 pnpm test:e2e              # Playwright E2E tests (auto-starts servers)

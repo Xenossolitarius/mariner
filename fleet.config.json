@@ -4,7 +4,7 @@
     "mode": "isolated"
   },
   "shared-vue": {
-    "apps": ["app1", "app2", "shared"],
+    "apps": ["app1", "tailwind-vue", "shared"],
     "mode": "shared"
   },
   "standalone": {

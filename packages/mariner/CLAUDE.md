@@ -4,9 +4,9 @@ Core framework package — provides the CLI, dev server, build system, and navig
 
 ## Architecture
 
-- `src/cli/` — CLI commands using Commander.js (dev, build, generate-types)
-- `src/server/` — Raw `node:http` dev server & worker-based build system
-- `src/navigator/` — Framework adapters (Vue, React) and navigator config
+- `src/cli/` — CLI commands using Commander.js (dev, build, serve, generate-types)
+- `src/server/` — Raw `node:http` dev server, build system, and serve server
+- `src/navigator/` — Framework adapters (Vue, React), navigator config, and `useCargo()`
 - `src/config/` — Configuration schema and defaults (merged with `defu`)
 - `src/setup/` — Project discovery, scanning for `mariner.config` files
 - `src/constants/` — File names, prefixes, and framework constants
@@ -27,22 +27,23 @@ Output is ESM via package.json `exports` field. Uses `rolldownOptions` (Vite 8).
 ## Key Exports
 
 - `mariner-fe` — Config helpers (`defineMarinerConfig`), setup functions
-- `mariner-fe/navigator` — `createVueNavigator`, `createReactNavigator`
+- `mariner-fe/navigator` — `createVueNavigator`, `createReactNavigator`, `useCargo`
 - `mariner-fe/plugins` — Vite plugins for virtual module resolution
 
 ## Server
 
 - **Dev**: Raw `node:http` + Vite middleware per app, each mounted at `/appname/` base path. Virtual `navigator:*` imports resolved by plugin. `optimizeDeps.entries` used for pre-bundling. No framework deps (Koa/Express removed).
-- **Build**: Worker pool for parallel builds. Generates manifests and type defs. Uses `rolldownOptions`.
+- **Build**: Worker pool for parallel builds. Generates manifests and type defs. Uses `rolldownOptions`. SSR mode (`--ssr`) keeps `useCargo()` as a runtime reference for the serve server.
+- **Serve**: Production `node:http` server that serves built navigators with per-request cargo injection. Runs `cargo.ts` on each request and prepends data as a module-scoped `const`.
 - **Type Generation**: Worker-based, combines all navigator exports into single `.mariner/mariner.d.ts`.
 
 ## Testing
 
 ```bash
-pnpm test                  # Unit tests (250 tests, 30 files)
-pnpm test:coverage         # With V8 coverage (100% on all reported files)
-pnpm test:integration      # Build integration tests (127 tests, 10 files)
-pnpm test:e2e              # Playwright E2E (57 tests, 5 projects)
+pnpm test                  # Unit tests (343 tests, 37 files)
+pnpm test:coverage         # With V8 coverage
+pnpm test:integration      # Build integration tests (136 tests, 11 files)
+pnpm test:e2e              # Playwright E2E (94 tests, 7 projects)
 pnpm test:all              # All vitest tests combined
 ```
 
@@ -51,7 +52,7 @@ pnpm test:all              # All vitest tests combined
 - `src/**/*.test.ts` — Unit tests (co-located with source)
 - `src/server/plugins/__integration__/` — Vite plugin integration tests (temp dirs + real vite.build)
 - `src/__build-integration__/` — Build pipeline integration tests (real playground builds, snapshots, perf)
-- `e2e/` — Playwright E2E tests (dev server, built output, screenshots, HTML snapshots, dev/build sync)
+- `e2e/` — Playwright E2E tests (dev server, built output, screenshots, HTML snapshots, dev/build sync, shared fleet, cargo/serve)
 
 ### Coverage Exclusions
 
