@@ -38,7 +38,7 @@ export const mountPage = (mounts: MountEntry[], options?: { reactDevUrl?: string
 
   const divs = mounts.map((m) => `<div id="${m.id}"></div>`).join('\n      ')
 
-  const imports = mounts.map((m, i) => `import('${m.url}')`).join(',\n          ')
+  const imports = mounts.map((m) => `import('${m.url}')`).join(',\n          ')
 
   const destructure = mounts.map((_, i) => `{ navigator: nav${i} }`).join(', ')
 

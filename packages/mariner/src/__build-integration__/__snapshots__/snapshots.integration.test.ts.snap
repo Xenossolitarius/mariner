@@ -147,6 +147,16 @@ declare module 'navigator:envs' {
   
   export { }
   
+}
+declare module 'navigator:tailwind-vue' {
+
+  import { Navigator as Navigator_2 } from 'mariner-fe/navigator';
+  
+  const navigator_2: Navigator_2;
+  export { navigator_2 as navigator }
+  
+  export { }
+  
 }"
 `;
 
