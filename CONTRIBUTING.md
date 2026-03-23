@@ -68,14 +68,14 @@ Changes to source code go in `packages/mariner/src/`. The playground apps in `pl
 
 ## Running tests
 
-| Command | What it runs |
-|---|---|
-| `pnpm test` | Unit tests (fast, ~343 tests) |
-| `pnpm test:coverage` | Unit tests with V8 coverage |
-| `pnpm test:integration` | Build integration tests (~136 tests) |
-| `pnpm test:e2e` | Playwright E2E tests (~106 tests) |
-| `pnpm check` | Lint + format + typecheck + unit tests |
-| `pnpm check:full` | Everything above combined |
+| Command                 | What it runs                           |
+| ----------------------- | -------------------------------------- |
+| `pnpm test`             | Unit tests (fast, ~343 tests)          |
+| `pnpm test:coverage`    | Unit tests with V8 coverage            |
+| `pnpm test:integration` | Build integration tests (~136 tests)   |
+| `pnpm test:e2e`         | Playwright E2E tests (~106 tests)      |
+| `pnpm check`            | Lint + format + typecheck + unit tests |
+| `pnpm check:full`       | Everything above combined              |
 
 ## Code style
 

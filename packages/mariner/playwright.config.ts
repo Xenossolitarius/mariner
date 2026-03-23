@@ -8,6 +8,7 @@ export default defineConfig({
   testDir: './e2e',
   timeout: 30000,
   retries: 0,
+  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   projects: [
     {
       name: 'dev-server',

@@ -73,8 +73,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Build package
+        run: pnpm --filter mariner-fe build
+
+      - name: Create dist dir for sirv
+        run: mkdir -p dist
+
       - name: Install Playwright browsers
         run: pnpm --filter mariner-fe exec playwright install --with-deps chromium
 
       - name: E2E tests
-        run: pnpm test:e2e
+        run: pnpm test:e2e --project dev-server --project screenshots --project shared-fleet --project cargo-serve --project tailwind-vue
