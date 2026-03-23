@@ -11,6 +11,8 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+docs/.vitepress/dist
+docs/.vitepress/cache
 .mariner-serve-e2e
 coverage
 *.local

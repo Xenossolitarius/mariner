@@ -19,7 +19,10 @@
     "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test",
     "check:full": "pnpm check && pnpm test:integration && pnpm test:e2e",
     "client:index": "sirv ./playground/client/index",
-    "client:build": "sirv ./playground/dist --port 3000 --cors"
+    "client:build": "sirv ./playground/dist --port 3000 --cors",
+    "docs:dev": "pnpm --filter @mariner/docs dev",
+    "docs:build": "pnpm --filter @mariner/docs build",
+    "docs:preview": "pnpm --filter @mariner/docs preview"
   },
   "resolutions": {
     "mariner-fe": "workspace:*"

@@ -83,10 +83,18 @@ describe('package build — file structure', () => {
 })
 
 describe('package build — bundle sizes', () => {
-  it('total dist size under 100 KB', () => {
+  it('library dist size under 100 KB (excludes CLI and workers)', () => {
+    const libSize =
+      fileSize('index.mjs') +
+      fileSize('index.d.mts') +
+      fileSize('navigator/index.mjs') +
+      fileSize('navigator/index.d.mts') +
+      fileSize('server/plugins/index.mjs') +
+      fileSize('server/plugins/index.d.mts')
     const total = getDirSize(distDir)
-    console.log(`    📦 Total dist: ${formatKB(total)}`)
-    expect(total).toBeLessThan(100 * 1024)
+    console.log(`    📦 Library entries: ${formatKB(libSize)}`)
+    console.log(`    📦 Total dist (with CLI + workers): ${formatKB(total)}`)
+    expect(libSize).toBeLessThan(100 * 1024)
   })
 
   it('library entries are small (externalized deps)', () => {

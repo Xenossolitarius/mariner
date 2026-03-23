@@ -17,7 +17,7 @@ export default defineBuildConfig({
       input: ['src/server/build/worker.ts', 'src/server/generate-types/worker.ts'],
       dts: false,
       rolldown: {
-        external: ['vite', 'defu', 'vue', 'react', 'react-dom/client'],
+        external: ['vite', 'vite-plugin-dts', 'defu', 'vue', 'react', 'react-dom/client'],
       },
     },
     // CLI (standalone bundle, inline deps)
@@ -28,6 +28,7 @@ export default defineBuildConfig({
       rolldown: {
         external: [
           'vite',
+          'vite-plugin-dts',
           'fsevents',
           'node:buffer',
           'node:child_process',
