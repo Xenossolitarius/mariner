@@ -5,7 +5,7 @@ export default defineMarinerConfig({
   mariner: 'app2',
   plugins: [vue()],
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       external: ['vue'],
     },
   },

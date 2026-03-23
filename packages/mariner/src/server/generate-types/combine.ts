@@ -16,7 +16,7 @@ async function findFoldersWithIndexDTS(rootDir: string) {
       try {
         await fs.access(indexPath)
         foldersWithIndexDTS.push(file.name)
-      } catch (error) {
+      } catch {
         // No index.d.ts file in this folder
       }
     }

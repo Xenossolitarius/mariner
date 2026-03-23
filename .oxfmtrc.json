@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 120,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/node_modules/",
+    "**/dist/",
+    "**/.mariner/",
+    "**/client/files/**",
+    "**/__snapshots__/",
+    "**/test-results/",
+    "**/*.snap",
+    "**/e2e/html-snapshots.e2e.ts-snapshots/",
+    "**/e2e/screenshots/"
+  ]
+}

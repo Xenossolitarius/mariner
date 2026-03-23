@@ -1,0 +1,175 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshot tests > dist file listing per app > app1 file listing matches snapshot 1`] = `
+[
+  ".vite",
+  "navigator.js",
+  "vite.[hash].svg",
+  "vite.svg",
+  "vue.[hash].svg",
+]
+`;
+
+exports[`snapshot tests > dist file listing per app > app3 file listing matches snapshot 1`] = `
+[
+  ".vite",
+  "navigator.js",
+  "react.[hash].svg",
+  "vite.[hash].svg",
+  "vite.svg",
+]
+`;
+
+exports[`snapshot tests > dist file listing per app > lazy file listing matches snapshot 1`] = `
+[
+  ".vite",
+  "navigator.js",
+  "vite.svg",
+]
+`;
+
+exports[`snapshot tests > dist file listing per app > shared file listing matches snapshot 1`] = `
+[
+  ".vite",
+  "navigator.js",
+  "vite.svg",
+]
+`;
+
+exports[`snapshot tests > manifest.json structure > app1 manifest matches snapshot 1`] = `
+{
+  "navigator.ts": {
+    "css": undefined,
+    "file": "navigator.js",
+    "isEntry": true,
+    "name": "navigator",
+    "src": "navigator.ts",
+  },
+}
+`;
+
+exports[`snapshot tests > manifest.json structure > app2 manifest matches snapshot 1`] = `
+{
+  "navigator.ts": {
+    "css": undefined,
+    "file": "navigator.js",
+    "isEntry": true,
+    "name": "navigator",
+    "src": "navigator.ts",
+  },
+}
+`;
+
+exports[`snapshot tests > manifest.json structure > app3 manifest matches snapshot 1`] = `
+{
+  "navigator.ts": {
+    "css": undefined,
+    "file": "navigator.js",
+    "isEntry": true,
+    "name": "navigator",
+    "src": "navigator.ts",
+  },
+}
+`;
+
+exports[`snapshot tests > manifest.json structure > js-test manifest matches snapshot 1`] = `
+{
+  "navigator.js": {
+    "css": undefined,
+    "file": "navigator.js",
+    "isEntry": true,
+    "name": "navigator",
+    "src": "navigator.js",
+  },
+}
+`;
+
+exports[`snapshot tests > manifest.json structure > lazy manifest matches snapshot 1`] = `
+{
+  "navigator.ts": {
+    "css": undefined,
+    "file": "navigator.js",
+    "isEntry": true,
+    "name": "navigator",
+    "src": "navigator.ts",
+  },
+}
+`;
+
+exports[`snapshot tests > manifest.json structure > shared manifest matches snapshot 1`] = `
+{
+  "navigator.ts": {
+    "css": undefined,
+    "file": "navigator.js",
+    "isEntry": true,
+    "name": "navigator",
+    "src": "navigator.ts",
+  },
+}
+`;
+
+exports[`snapshot tests > mariner.d.ts type definitions > matches snapshot 1`] = `
+"declare module 'navigator:app1' {
+
+  import { Navigator as Navigator_2 } from 'mariner-fe/navigator';
+  
+  export const cargo: any;
+  
+  const navigator_2: Navigator_2;
+  export { navigator_2 as navigator }
+  
+  export { }
+  
+}
+declare module 'navigator:app2' {
+
+  import { Navigator as Navigator_2 } from 'mariner-fe/navigator';
+  
+  const navigator_2: Navigator_2;
+  export { navigator_2 as navigator }
+  
+  export { }
+  
+}
+declare module 'navigator:app3' {
+
+  import { Navigator as Navigator_2 } from 'mariner-fe/navigator';
+  
+  const navigator_2: Navigator_2;
+  export { navigator_2 as navigator }
+  
+  export { }
+  
+}
+declare module 'navigator:envs' {
+
+  export const MARINER_GLOBAL_VARIABLE: any;
+  
+  export { }
+  
+}
+declare module 'navigator:tailwind-vue' {
+
+  import { Navigator as Navigator_2 } from 'mariner-fe/navigator';
+  
+  const navigator_2: Navigator_2;
+  export { navigator_2 as navigator }
+  
+  export { }
+  
+}"
+`;
+
+exports[`snapshot tests > navigator.js import/export structure > app1 imports match snapshot (vue + shared + lazy) 1`] = `[]`;
+
+exports[`snapshot tests > navigator.js import/export structure > app2 imports match snapshot (vue + shared + js-test) 1`] = `[]`;
+
+exports[`snapshot tests > navigator.js import/export structure > app3 imports match snapshot (React) 1`] = `[]`;
+
+exports[`snapshot tests > navigator.js import/export structure > envs imports match snapshot (leaf — no navigators) 1`] = `[]`;
+
+exports[`snapshot tests > navigator.js import/export structure > js-test imports match snapshot (leaf — no navigators) 1`] = `[]`;
+
+exports[`snapshot tests > navigator.js import/export structure > lazy imports match snapshot (leaf — no navigators) 1`] = `[]`;
+
+exports[`snapshot tests > navigator.js import/export structure > shared imports match snapshot (leaf — no navigators) 1`] = `[]`;

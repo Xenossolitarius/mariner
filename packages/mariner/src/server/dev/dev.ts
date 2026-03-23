@@ -1,16 +1,15 @@
-import { createServer as createViteServer } from 'vite'
+import { createServer as createViteServer, type ViteDevServer } from 'vite'
+import http from 'node:http'
+import path from 'node:path'
 import { ServerOptions } from '../server'
 import { DEV_SERVER_DEFAULTS } from '.'
-
-import Koa from 'koa'
-import koaConnect from 'koa-connect'
-import connect from 'connect'
-import koaCors from '@koa/cors'
-
 import { MarinerProject } from '../..'
 import { MARINER_ENV_PREFIX } from '../../constants'
 import { resolveVirtualNavigators } from '../plugins/resolve-virtual-navigators'
+import { resolveCargo } from '../plugins/resolve-cargo'
 import { startHTTPSServer } from './https'
+import { SERVER_READY } from '../../cli/messages'
+import { createSharedNavServers } from './shared-dev'
 
 export const getServerUrl = (serverOps: ServerOptions) => ({
   hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
@@ -18,25 +17,30 @@ export const getServerUrl = (serverOps: ServerOptions) => ({
   secure: serverOps.commands.https,
 })
 
+export type AppRoute = {
+  base: string
+  navigator: string
+  vite: ViteDevServer
+  /** Relative path from Vite root to app directory (only set for shared fleet routes) */
+  relativeRoot?: string
+}
+
 export const createNavServer = async (
-  connector: connect.Server,
   serverOps: ServerOptions,
   project: MarinerProject,
   index = 0,
-) => {
-  const config = project.configFile!.config // will asume it exists
+): Promise<AppRoute> => {
+  const config = project.configFile!.config
 
   const { port, hostname, secure } = getServerUrl(serverOps)
 
   const base = `/${project.mariner}`
-
   const rootBasePath = serverOps.commands.rootBase ? `/${serverOps.commands.rootBase}` : ''
-
   const fullBase = `${rootBasePath}${base}`
 
-  config.build!.rollupOptions!.input = project.navigator
+  const navigatorEntry = path.join(project.root, project.navigator!)
 
-  const server = await createViteServer({
+  const vite = await createViteServer({
     ...config,
     appType: 'custom',
     base: fullBase,
@@ -44,55 +48,126 @@ export const createNavServer = async (
     envPrefix: MARINER_ENV_PREFIX,
     configFile: false,
     root: project.root,
-    plugins: [...(config.plugins || []), resolveVirtualNavigators(base, serverOps)],
+    plugins: [
+      ...(config.plugins || []),
+      resolveVirtualNavigators(base, serverOps),
+      resolveCargo({ projects: [project] }),
+    ],
+    optimizeDeps: { entries: [navigatorEntry] },
     server: {
       middlewareMode: true,
-      origin: `${secure ? 'https' : 'http'}://${hostname}:${port}`, // TODO: SSL
-      hmr: { port: 6001 + index, protocol: secure ? 'wss' : 'ws' },
+      origin: `${secure ? 'https' : 'http'}://${hostname}:${port}`,
+      hmr: { port: index, protocol: secure ? 'wss' : 'ws' },
     },
   })
 
-  connector.use(fullBase, (req, res, next) => {
-    // remove base
-    req.url = req.url?.replace(fullBase, '')
+  return { base: fullBase, navigator: project.navigator!, vite }
+}
 
-    serverOps.commands.debug && console.log(`${fullBase}, ${req.url}`)
+export const createHandler = (routes: AppRoute[], debug?: boolean): http.RequestListener => {
+  // Collect shared Vite instances for fleet-level routing (/@vite/, /node_modules/, etc.)
+  const fleetVites = new Map<string, ViteDevServer>()
+  for (const route of routes) {
+    if (route.relativeRoot !== undefined) {
+      // Extract fleet base (everything before the app name in route.base)
+      const fleetBase = route.base.slice(0, route.base.lastIndexOf('/'))
+      if (fleetBase) fleetVites.set(fleetBase, route.vite)
+    }
+  }
 
-    const entry = '/navigator.js'
-
-    if (req.url === entry) {
-      req.url = `/${project.navigator}`
+  return (req, res) => {
+    // CORS
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', '*')
+    res.setHeader('Access-Control-Allow-Headers', '*')
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204).end()
+      return
     }
 
-    server.middlewares(req, res, next)
-  })
+    const url = req.url || '/'
 
-  return server
+    // Match request to an app route
+    const route = routes.find((r) => url.startsWith(r.base))
+
+    if (route) {
+      if (route.relativeRoot !== undefined) {
+        // Shared fleet: rewrite /{fleet}/{appname}/... → /{fleet}/{relativeRoot}/...
+        const fleetBase = route.base.slice(0, route.base.lastIndexOf('/'))
+        const stripped = url.slice(route.base.length) || '/'
+        if (stripped === '/navigator.js') {
+          req.url = `${fleetBase}/${route.relativeRoot}/${route.navigator}`
+        } else {
+          req.url = `${fleetBase}/${route.relativeRoot}${stripped}`
+        }
+      } else {
+        // Isolated: strip base path as before
+        req.url = url.slice(route.base.length) || '/'
+        if (req.url === '/navigator.js') {
+          req.url = `/${route.navigator}`
+        }
+      }
+
+      debug && console.log(`${route.base}, ${req.url}`)
+      route.vite.middlewares(req, res)
+      return
+    }
+
+    // No app route matched — check if this is a fleet-level request (/@vite/, /node_modules/, etc.)
+    for (const [fleetBase, vite] of fleetVites) {
+      if (url.startsWith(fleetBase)) {
+        vite.middlewares(req, res)
+        return
+      }
+    }
+
+    res.writeHead(404).end()
+  }
 }
 
 export const createDevServer = async (options: ServerOptions) => {
-  const app = new Koa()
-  const router = connect()
+  const routes: AppRoute[] = []
+  // Derive HMR base port from server port to avoid conflicts when multiple servers run.
+  // Each server gets a block of 100 ports so parallel servers on different ports never collide.
+  const serverPort = getServerUrl(options).port || DEV_SERVER_DEFAULTS.port
+  let hmrPortCounter = 10001 + (serverPort - DEV_SERVER_DEFAULTS.port) * 100
 
-  app.use(koaCors())
-
-  await Promise.all(options.projects.map((project, index) => createNavServer(router, options, project, index)))
-
-  options.commands.debug &&
-    router.use((req, res, next) => {
-      console.log(req.url)
-      next()
-    })
-
-  app.use(koaConnect(router))
+  if (options.fleetGroups) {
+    for (const group of options.fleetGroups) {
+      if (group.mode === 'shared') {
+        const sharedRoutes = await createSharedNavServers(options, group, hmrPortCounter)
+        routes.push(...sharedRoutes)
+        hmrPortCounter++ // one HMR port for the shared Vite instance
+      } else {
+        for (const project of group.projects) {
+          routes.push(await createNavServer(options, project, hmrPortCounter++))
+        }
+      }
+    }
+  } else {
+    // Backward compat: no fleet groups, all isolated
+    const isolatedRoutes = await Promise.all(
+      options.projects.map((project, index) => createNavServer(options, project, hmrPortCounter + index)),
+    )
+    routes.push(...isolatedRoutes)
+  }
 
   const { port, hostname, secure } = getServerUrl(options)
+  const handler = createHandler(routes, options.commands.debug)
+
+  const printReady = (protocol: string) => {
+    console.log(
+      SERVER_READY(
+        `${protocol}://${hostname}:${port}`,
+        routes.map((r) => r.base),
+      ),
+    )
+  }
 
   if (secure) {
-    startHTTPSServer(app, { port, hostname, secure })
+    startHTTPSServer(handler, { port, hostname, secure })
+    printReady('https')
   } else {
-    app.listen(port, hostname, () => {
-      console.log(`Started dev on: http://${hostname}:${port}`)
-    })
+    http.createServer(handler).listen(port, hostname, () => printReady('http'))
   }
 }

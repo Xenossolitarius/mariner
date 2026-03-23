@@ -5,9 +5,8 @@ import os from 'node:os'
 import { ServerOptions } from './server'
 import { MarinerProject } from '../setup'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-const scriptPath = () => globalThis.marinerCliEntry
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const scriptPath = () => (globalThis as any).marinerCliEntry
 
 export type TaskPayload = {
   options: ServerOptions

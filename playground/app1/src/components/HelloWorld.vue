@@ -21,9 +21,7 @@ const counterStore = useCounter()
 const rerenderKey = ref(0)
 
 // for reactivity use the same Vue instance
-counterStore.$subscribe(() => rerenderKey.value +=1)
-
-
+counterStore.$subscribe(() => (rerenderKey.value += 1))
 </script>
 
 <template>
@@ -35,15 +33,16 @@ counterStore.$subscribe(() => rerenderKey.value +=1)
       Edit
       <code>components/HelloWorld.vue</code> to test HMR
     </p>
-    <button :key="rerenderKey" type="button" @click="counterStore.update">Shared store count is {{ counterStore.counter }}</button>
-    <button @click="startLazyNavigator"> Import lazy navigator</button>
+    <button :key="rerenderKey" type="button" @click="counterStore.update">
+      Shared store count is {{ counterStore.counter }}
+    </button>
+    <button @click="startLazyNavigator">Import lazy navigator</button>
   </div>
 
   <p>
     Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
+    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank">create-vue</a>, the official Vue + Vite
+    starter
   </p>
   <p>
     Install

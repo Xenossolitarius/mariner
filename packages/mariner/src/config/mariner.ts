@@ -20,12 +20,10 @@ const getMarinerViteConfig = (): UserConfig => ({
       polyfill: false,
     },
     manifest: true,
-    rollupOptions: {
+    rolldownOptions: {
       input: FILES.navigator,
       preserveEntrySignatures: 'exports-only',
-      output: {
-        // format: 'esm',
-      },
+      output: {},
     },
   },
 })

@@ -1,4 +1,5 @@
 import type { MarinerOptions, MarinerProject } from '../setup'
+import type { ResolvedFleetGroup } from '../setup/types'
 import type { ServerCommandOptions } from '../cli/commands/shared/server'
 import { createDevServer } from '.'
 import { createBuildServer } from './build'
@@ -7,6 +8,7 @@ export type ServerOptions = {
   setup: MarinerOptions
   projects: MarinerProject[]
   commands: ServerCommandOptions & DevCommandOptions
+  fleetGroups?: ResolvedFleetGroup[]
 }
 
 export type DevCommandOptions = {
@@ -16,7 +18,7 @@ export type DevCommandOptions = {
 }
 
 export type BuildCommandOptions = {
-  // on build
+  ssr?: true
 }
 
 export const createServer = (options: ServerOptions) => {

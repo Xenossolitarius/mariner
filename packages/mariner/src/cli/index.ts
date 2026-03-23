@@ -9,9 +9,8 @@ import { WORKING_IN } from './messages'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-globalThis.marinerCliEntry = globalThis.marinerCliEntry ?? resolve(dirname(fileURLToPath(import.meta.url)), '..')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+;(globalThis as any).marinerCliEntry ??= resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 export const run = async () => {
   WORKING_IN(process.cwd())

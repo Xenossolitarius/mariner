@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "pinia": "^2.1.7",
-    "vue": "^3.4.27"
+    "pinia": "^3.0.4",
+    "vue": "^3.5.30"
   },
   "devDependencies": {
     "mariner-fe": "workspace:*",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12"
+    "vite": "^8.0.1"
   }
 }

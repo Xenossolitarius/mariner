@@ -14,12 +14,7 @@
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "lib": ["ESNext", "DOM"],
-    "types": [
-      "node", 
-      "vite"
-    ],
+    "types": ["node", "vite"]
   },
-  "exclude": [
-    "**/dist/**",
-  ]
+  "exclude": ["**/dist/**"]
 }
