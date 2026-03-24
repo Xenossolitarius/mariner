@@ -34,8 +34,44 @@ export default defineConfig({
             { text: 'Project Structure', link: '/getting-started/project-structure' },
           ],
         },
+        {
+          text: 'Core Concepts',
+          items: [
+            { text: 'Navigators', link: '/guide/navigators' },
+            { text: 'Virtual Modules', link: '/guide/virtual-modules' },
+            { text: 'Fleets', link: '/guide/fleets' },
+            { text: 'Cargo', link: '/guide/cargo' },
+            { text: 'Serve Mode', link: '/guide/serve-mode' },
+          ],
+        },
+        {
+          text: 'Framework Guides',
+          items: [
+            { text: 'Vue', link: '/guide/vue' },
+            { text: 'React', link: '/guide/react' },
+          ],
+        },
+        {
+          text: 'Advanced',
+          items: [
+            { text: 'Configuration', link: '/guide/configuration' },
+            { text: 'Environment Variables', link: '/guide/environment' },
+            { text: 'Type Generation', link: '/guide/type-generation' },
+            { text: 'Dev Server Architecture', link: '/guide/dev-server' },
+            { text: 'Building for Production', link: '/guide/building' },
+            { text: 'Constraints & Rules', link: '/guide/constraints' },
+          ],
+        },
       ],
       '/guide/': [
+        {
+          text: 'Getting Started',
+          items: [
+            { text: 'Introduction', link: '/getting-started/' },
+            { text: 'Quick Start', link: '/getting-started/quick-start' },
+            { text: 'Project Structure', link: '/getting-started/project-structure' },
+          ],
+        },
         {
           text: 'Core Concepts',
           items: [
