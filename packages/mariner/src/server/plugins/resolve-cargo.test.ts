@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
 import { resolveCargo } from './resolve-cargo'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -26,6 +26,16 @@ const dirs = {
   defaultExport: path.join(baseDir, 'default-export'),
   ssr: path.join(baseDir, 'ssr'),
   noCargo: path.join(baseDir, 'no-cargo'),
+}
+
+function mockServer() {
+  return {
+    moduleGraph: {
+      getModuleById: vi.fn().mockReturnValue({ id: 'test-module' }),
+      invalidateModule: vi.fn(),
+    },
+    ws: { send: vi.fn() },
+  }
 }
 
 beforeAll(() => {
@@ -196,6 +206,66 @@ describe('resolveCargo', () => {
       const result = plugin.transform('useCargo()', path.join(dirs.normal, 'nav.ts'))
 
       expect(result.code).toContain(`root=${encodeURIComponent(dirs.normal)}`)
+    })
+  })
+
+  describe('handleHotUpdate', () => {
+    it('triggers full reload when a cargo file changes', () => {
+      const plugin = getPlugin(resolveCargo({ projects: [makeProject(dirs.normal)] }))
+      const server = mockServer()
+
+      const cargoFile = path.join(dirs.normal, 'cargo.js')
+      const result = plugin.handleHotUpdate({ file: cargoFile, server })
+
+      expect(server.moduleGraph.getModuleById).toHaveBeenCalledWith(
+        `${CARGO_RESOLVED_ID}?root=${encodeURIComponent(dirs.normal)}`,
+      )
+      expect(server.moduleGraph.invalidateModule).toHaveBeenCalled()
+      expect(server.ws.send).toHaveBeenCalledWith({ type: 'full-reload' })
+      expect(result).toEqual([])
+    })
+
+    it('does nothing for non-cargo files', () => {
+      const plugin = getPlugin(resolveCargo({ projects: [makeProject(dirs.normal)] }))
+      const server = mockServer()
+
+      const result = plugin.handleHotUpdate({ file: path.join(dirs.normal, 'src', 'App.vue'), server })
+
+      expect(server.ws.send).not.toHaveBeenCalled()
+      expect(result).toBeUndefined()
+    })
+
+    it('does nothing for cargo files outside of known projects', () => {
+      const plugin = getPlugin(resolveCargo({ projects: [makeProject(dirs.normal)] }))
+      const server = mockServer()
+
+      const result = plugin.handleHotUpdate({ file: '/some/other/project/cargo.ts', server })
+
+      expect(server.ws.send).not.toHaveBeenCalled()
+      expect(result).toBeUndefined()
+    })
+
+    it('skips module invalidation when virtual module is not in graph', () => {
+      const plugin = getPlugin(resolveCargo({ projects: [makeProject(dirs.normal)] }))
+      const server = mockServer()
+      server.moduleGraph.getModuleById.mockReturnValue(null)
+
+      const cargoFile = path.join(dirs.normal, 'cargo.js')
+      const result = plugin.handleHotUpdate({ file: cargoFile, server })
+
+      expect(server.moduleGraph.invalidateModule).not.toHaveBeenCalled()
+      expect(server.ws.send).toHaveBeenCalledWith({ type: 'full-reload' })
+      expect(result).toEqual([])
+    })
+
+    it('handles projects without cargo files', () => {
+      const plugin = getPlugin(resolveCargo({ projects: [makeProject(dirs.noCargo)] }))
+      const server = mockServer()
+
+      const result = plugin.handleHotUpdate({ file: path.join(dirs.noCargo, 'cargo.ts'), server })
+
+      expect(server.ws.send).not.toHaveBeenCalled()
+      expect(result).toBeUndefined()
     })
   })
 })

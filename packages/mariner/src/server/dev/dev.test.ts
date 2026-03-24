@@ -4,12 +4,17 @@ import { createHandler, createNavServer, createDevServer, getServerUrl, type App
 import type { ServerOptions } from '../server'
 import type { MarinerProject } from '../../setup'
 
-vi.mock('vite', () => ({
-  createServer: vi.fn().mockResolvedValue({
-    middlewares: vi.fn(),
-    config: { base: '/test' },
-  }),
-}))
+vi.mock('vite', async () => {
+  const { EventEmitter } = await import('node:events')
+  return {
+    createServer: vi.fn().mockResolvedValue({
+      middlewares: vi.fn(),
+      config: { base: '/test' },
+      watcher: new EventEmitter(),
+      ws: { send: vi.fn() },
+    }),
+  }
+})
 
 vi.mock('node:http', () => ({
   default: {
@@ -27,13 +32,19 @@ vi.mock('../plugins/resolve-virtual-navigators', () => ({
   resolveVirtualNavigators: vi.fn().mockReturnValue({ name: 'mock-plugin' }),
 }))
 
-vi.mock('./shared-dev', () => ({
-  createSharedNavServers: vi
-    .fn()
-    .mockResolvedValue([
-      { base: '/fleet/app1', navigator: 'navigator.ts', vite: { middlewares: vi.fn() }, relativeRoot: 'app1' },
+vi.mock('./shared-dev', async () => {
+  const { EventEmitter } = await import('node:events')
+  return {
+    createSharedNavServers: vi.fn().mockResolvedValue([
+      {
+        base: '/fleet/app1',
+        navigator: 'navigator.ts',
+        vite: { middlewares: vi.fn(), watcher: new EventEmitter(), ws: { send: vi.fn() } },
+        relativeRoot: 'app1',
+      },
     ]),
-}))
+  }
+})
 
 import { createServer as createViteServer } from 'vite'
 import http from 'node:http'

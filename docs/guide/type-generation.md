@@ -106,12 +106,7 @@ The path `../.mariner/mariner.d.ts` assumes your `tsconfig.json` is inside an ap
     "moduleResolution": "bundler",
     "strict": true
   },
-  "include": [
-    "navigator.ts",
-    "src/**/*.ts",
-    "src/**/*.vue",
-    "../.mariner/mariner.d.ts"
-  ]
+  "include": ["navigator.ts", "src/**/*.ts", "src/**/*.vue", "../.mariner/mariner.d.ts"]
 }
 ```
 

@@ -243,11 +243,11 @@ Keep navigator files lean. Heavy initialization logic should live in your app's 
 
 ## Navigator File Formats
 
-| File              | Language   | Type generation | Notes                               |
-| ----------------- | ---------- | --------------- | ----------------------------------- |
-| `navigator.ts`    | TypeScript | Yes             | Preferred — full type safety        |
-| `navigator.js`    | JavaScript | No              | Works but no cross-app type safety  |
-| `navigator.tsx`   | —          | —               | Not supported — use `.ts` with JSX  |
-| `navigator.mts`   | —          | —               | Not supported                       |
+| File            | Language   | Type generation | Notes                              |
+| --------------- | ---------- | --------------- | ---------------------------------- |
+| `navigator.ts`  | TypeScript | Yes             | Preferred — full type safety       |
+| `navigator.js`  | JavaScript | No              | Works but no cross-app type safety |
+| `navigator.tsx` | —          | —               | Not supported — use `.ts` with JSX |
+| `navigator.mts` | —          | —               | Not supported                      |
 
 Only `.ts` and `.js` extensions are recognized by Mariner's project scanner.

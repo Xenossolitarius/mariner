@@ -44,6 +44,7 @@ The app name (from the `mariner` field in `mariner.config.ts`) is **slugified** 
 - Spaces replaced with hyphens
 
 This slugified name is used for:
+
 - URL routing: `/{slugified-name}/navigator.js`
 - Virtual module imports: `navigator:{slugified-name}`
 - Build output: `dist/{slugified-name}/`
@@ -99,10 +100,10 @@ While `export * from './src'` works, be aware that it exposes your entire module
 Virtual module imports follow the pattern `navigator:{appname}` where `appname` matches the slugified Mariner name:
 
 ```ts
-import { pinia } from 'navigator:shared'     // ✅
-import { pinia } from 'navigator:Shared'     // ❌ case-sensitive
-import { pinia } from 'navigator:my app'     // ❌ use slugified name
-import { pinia } from 'navigator:my-app'     // ✅ slugified
+import { pinia } from 'navigator:shared' // ✅
+import { pinia } from 'navigator:Shared' // ❌ case-sensitive
+import { pinia } from 'navigator:my app' // ❌ use slugified name
+import { pinia } from 'navigator:my-app' // ✅ slugified
 ```
 
 ### No Self-Imports
@@ -119,12 +120,12 @@ While Mariner doesn't explicitly detect circular dependencies between navigators
 
 The following build settings are applied by Mariner and **cannot be overridden**, even if you set them in your config:
 
-| Setting                                        | Value            | Why                                           |
-| ---------------------------------------------- | ---------------- | --------------------------------------------- |
-| `build.manifest`                               | `true`           | Required for asset manifest generation        |
-| `build.modulePreload.polyfill`                 | `false`          | Navigators are loaded dynamically, not via `<link>` |
-| `build.rolldownOptions.input`                  | `'navigator'`    | Entry point is always the navigator file      |
-| `build.rolldownOptions.preserveEntrySignatures` | `'exports-only'` | Preserves the export shape of navigator files |
+| Setting                                         | Value            | Why                                                 |
+| ----------------------------------------------- | ---------------- | --------------------------------------------------- |
+| `build.manifest`                                | `true`           | Required for asset manifest generation              |
+| `build.modulePreload.polyfill`                  | `false`          | Navigators are loaded dynamically, not via `<link>` |
+| `build.rolldownOptions.input`                   | `'navigator'`    | Entry point is always the navigator file            |
+| `build.rolldownOptions.preserveEntrySignatures` | `'exports-only'` | Preserves the export shape of navigator files       |
 
 ### Deep Merge Behavior
 
@@ -144,12 +145,12 @@ The cargo function must return **JSON-serializable data**. Functions, symbols, c
 // cargo.ts
 export const cargo = async () => {
   return {
-    greeting: 'Hello',     // ✅ string
-    count: 42,             // ✅ number
+    greeting: 'Hello', // ✅ string
+    count: 42, // ✅ number
     features: { a: true }, // ✅ nested object
-    items: [1, 2, 3],      // ✅ array
-    handler: () => {},     // ❌ functions are not serializable
-    users: new Map(),      // ❌ Map is not serializable
+    items: [1, 2, 3], // ✅ array
+    handler: () => {}, // ❌ functions are not serializable
+    users: new Map(), // ❌ Map is not serializable
   }
 }
 ```
@@ -168,18 +169,19 @@ export default async () => ({ ... })
 
 ### Execution Timing
 
-| Mode              | When it runs         | Node.js APIs available? |
-| ----------------- | -------------------- | ----------------------- |
-| Dev               | Per page reload      | Yes                     |
-| Build (no --ssr)  | Once at build time   | Yes                     |
-| Build (--ssr)     | Not at build time    | N/A                     |
-| Serve             | Per HTTP request     | Yes                     |
+| Mode             | When it runs       | Node.js APIs available? |
+| ---------------- | ------------------ | ----------------------- |
+| Dev              | Per page reload    | Yes                     |
+| Build (no --ssr) | Once at build time | Yes                     |
+| Build (--ssr)    | Not at build time  | N/A                     |
+| Serve            | Per HTTP request   | Yes                     |
 
 In dev and non-SSR build modes, the cargo function runs in the Vite build process. In SSR + serve mode, it runs in the serve server's Node.js process.
 
 ### Failure Behavior
 
 If the cargo function throws an error:
+
 - **Dev/Build**: The build plugin catches the error and `useCargo()` returns `null`
 - **Serve**: The serve server still responds with the navigator code, but without cargo data prepended. `useCargo()` returns `undefined` in the browser.
 
@@ -194,11 +196,11 @@ const greeting = cargo?.greeting ?? 'Default greeting'
 
 Mariner uses a validity check to determine which discovered apps can be used:
 
-| Condition                    | Valid? | Behavior                                   |
-| ---------------------------- | ------ | ------------------------------------------ |
-| Has `navigator.ts` or `.js`  | Yes    | Available for dev, build, type generation  |
-| Missing navigator file       | No     | Appears in CLI but disabled for selection  |
-| Missing `mariner.config`     | —      | Not discovered at all                      |
+| Condition                   | Valid? | Behavior                                  |
+| --------------------------- | ------ | ----------------------------------------- |
+| Has `navigator.ts` or `.js` | Yes    | Available for dev, build, type generation |
+| Missing navigator file      | No     | Appears in CLI but disabled for selection |
+| Missing `mariner.config`    | —      | Not discovered at all                     |
 
 ## Fleet Constraints
 
@@ -234,6 +236,7 @@ This is equivalent to `{ "apps": ["app1", "app2"], "mode": "isolated" }`.
 ### Shared Mode Compatibility
 
 In shared mode, all apps in the fleet share a single Vite dev server. This means:
+
 - All apps must be compatible with a single Vite configuration
 - Conflicting plugins will cause errors
 - Different plugin versions for the same purpose will conflict
@@ -260,11 +263,7 @@ Your `tsconfig.json` must include the generated type file for virtual module imp
 
 ```json
 {
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.vue",
-    "../.mariner/mariner.d.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.vue", "../.mariner/mariner.d.ts"]
 }
 ```
 

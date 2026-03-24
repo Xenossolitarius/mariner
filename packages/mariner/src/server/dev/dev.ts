@@ -10,6 +10,7 @@ import { resolveCargo } from '../plugins/resolve-cargo'
 import { startHTTPSServer } from './https'
 import { SERVER_READY } from '../../cli/messages'
 import { createSharedNavServers } from './shared-dev'
+import { setupCrossAppHmr } from './hmr-bridge'
 
 export const getServerUrl = (serverOps: ServerOptions) => ({
   hostname: serverOps.commands.hostname || DEV_SERVER_DEFAULTS.hostname,
@@ -151,6 +152,9 @@ export const createDevServer = async (options: ServerOptions) => {
     )
     routes.push(...isolatedRoutes)
   }
+
+  // Cross-app HMR: when a navigator changes in one Vite server, reload all other apps
+  setupCrossAppHmr(routes, options.projects)
 
   const { port, hostname, secure } = getServerUrl(options)
   const handler = createHandler(routes, options.commands.debug)

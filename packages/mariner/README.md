@@ -210,9 +210,13 @@ This way you can locally host only affected microfrontends and not put such a he
 
 Also you can use this mechanism to override certain microfrontends and redirect to a _different build_ for a specific market you are supporting.
 
-## <a name="hmr">🚧 HMR </a>
+## <a name="hmr">🔥 HMR </a>
 
-Hmr is available for most Vite supported frameworks although it requires a bit of manual setup (refer to playground) and launches one WS connection per micro app. It's WIP.
+Hot Module Replacement works out of the box for all Vite-supported frameworks (Vue, React, etc.). Each microfrontend gets its own HMR WebSocket connection in isolated mode, or shares one in shared fleet mode.
+
+**Cross-app HMR**: When a navigator file changes in one app, all other apps automatically reload to pick up the updated exports. This means editing `shared/navigator.ts` will trigger a reload in every app that imports from `navigator:shared`.
+
+**Cargo HMR**: Changes to `cargo.ts` files trigger an automatic full reload, re-executing the cargo function and injecting fresh data — no manual refresh needed.
 
 ## <a name="cargo">📦 Cargo (Server-Side Data)</a>
 

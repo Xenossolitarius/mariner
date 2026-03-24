@@ -86,6 +86,7 @@ When cargo fails silently, `useCargo()` in the browser will receive the `__MARIN
 const cargo = useCargo<MyData>()
 const greeting = cargo?.greeting ?? 'Default greeting'
 ```
+
 :::
 
 ## Apps Without Cargo

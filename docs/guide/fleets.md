@@ -43,6 +43,7 @@ This is equivalent to `{ "apps": ["app1", "app2"], "mode": "isolated" }`.
 Fleet config is validated with an AJV JSON schema at load time. Invalid configs produce a warning but are non-fatal — the invalid fleet is simply ignored.
 
 Requirements:
+
 - Each fleet value must be an object with `apps` (string array) and `mode` (`"isolated"` or `"shared"`)
 - Or a plain string array (legacy format, auto-normalized)
 
@@ -60,11 +61,13 @@ Each app gets its own Vite dev server. This provides **full dependency isolation
 | Independent HMR      | Each app has its own HMR WebSocket connection          |
 
 **Dev server behavior:**
+
 - One Vite dev server per app, mounted at `/{appname}/`
 - Each server has unique HMR port to avoid collisions
 - Each server runs its own dependency pre-bundling
 
 **Build behavior:**
+
 - Apps built in parallel via worker pool
 - Each app produces an independent `dist/{appname}/navigator.js`
 - Cross-app imports are external URLs (`/{appname}/navigator.js`)
@@ -83,6 +86,7 @@ All apps in the fleet share a single Vite dev server. This trades isolation for 
 | Build deduplication | Shared code extracted into common chunks                   |
 
 **Dev server behavior:**
+
 - Single Vite dev server for all fleet apps
 - Apps served under `/{fleet-name}/{appname}/navigator.js`
 - Plugins from all apps are merged (deduped by plugin name)
@@ -90,6 +94,7 @@ All apps in the fleet share a single Vite dev server. This trades isolation for 
 - Shared `@vite/client` and pre-bundled dependencies
 
 **Build behavior:**
+
 - Single Vite build with multiple entry points
 - Rolldown extracts shared code into `chunks/` directory
 - Intra-fleet `navigator:*` imports are resolved to file paths (bundled together)
@@ -97,6 +102,7 @@ All apps in the fleet share a single Vite dev server. This trades isolation for 
 - Significantly smaller total output when apps share large dependencies
 
 **Shared build output example:**
+
 ```
 dist/
   app1/
@@ -118,12 +124,12 @@ An app can appear in multiple fleets. This is useful when the same app needs to 
 
 How `navigator:*` imports behave depends on the fleet mode and whether the target app is in the same fleet:
 
-| Source Fleet | Target App | Mode     | Resolution                                           |
-| ------------ | ---------- | -------- | ---------------------------------------------------- |
-| shared-vue   | shared     | shared   | Resolved to file path (bundled together)            |
-| shared-vue   | app3       | isolated | External URL (`/app3/navigator.js`)                 |
-| test         | app1       | isolated | External URL (`/app1/navigator.js`)                 |
-| standalone   | lazy       | isolated | External URL (`/lazy/navigator.js`)                 |
+| Source Fleet | Target App | Mode     | Resolution                               |
+| ------------ | ---------- | -------- | ---------------------------------------- |
+| shared-vue   | shared     | shared   | Resolved to file path (bundled together) |
+| shared-vue   | app3       | isolated | External URL (`/app3/navigator.js`)      |
+| test         | app1       | isolated | External URL (`/app1/navigator.js`)      |
+| standalone   | lazy       | isolated | External URL (`/lazy/navigator.js`)      |
 
 In shared mode, same-fleet imports become direct file imports — the browser doesn't need a separate network request. This is the key advantage of shared builds.
 
@@ -168,6 +174,7 @@ mariner build --all
 ```
 
 The build system respects the fleet's mode:
+
 - **Isolated fleets**: Apps built in parallel via worker pool, independent output
 - **Shared fleets**: Single multi-entry Vite build, shared chunks extracted
 

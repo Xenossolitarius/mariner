@@ -27,6 +27,12 @@ export function resolveCargo(options: ResolveCargoOptions): Plugin {
     if (cargoPath) cargoMap.set(project.root, cargoPath)
   }
 
+  // Reverse map: normalized cargo file path → project root (for handleHotUpdate lookup)
+  const cargoFileToRoot = new Map<string, string>()
+  for (const [root, cargoPath] of cargoMap) {
+    cargoFileToRoot.set(path.normalize(cargoPath), root)
+  }
+
   return {
     name: 'mariner-resolve-cargo',
 
@@ -57,6 +63,23 @@ export function resolveCargo(options: ResolveCargoOptions): Plugin {
 
       const data = await cargoFn()
       return `export default ${JSON.stringify(data)}`
+    },
+
+    handleHotUpdate({ file, server }) {
+      const root = cargoFileToRoot.get(path.normalize(file))
+      if (!root) return
+
+      // Invalidate the virtual cargo module so it re-executes the cargo function on next load
+      const virtualId = `${CARGO_RESOLVED_ID}?root=${encodeURIComponent(root)}`
+      const mod = server.moduleGraph.getModuleById(virtualId)
+      if (mod) {
+        server.moduleGraph.invalidateModule(mod)
+      }
+
+      // Trigger full reload — cargo data is baked into the module at load time,
+      // so the page must fully reload to re-fetch the updated data.
+      server.ws.send({ type: 'full-reload' })
+      return []
     },
 
     transform(code, id) {

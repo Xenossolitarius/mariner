@@ -31,6 +31,7 @@ dist/
 ```
 
 **How it works:**
+
 1. Discover and select apps
 2. Create a worker pool (default: half of CPU cores, max 4)
 3. Send each app to a worker thread
@@ -38,6 +39,7 @@ dist/
 5. Output lands in `dist/{appname}/`
 
 **Plugins applied per app:**
+
 1. User plugins from `mariner.config.ts`
 2. `cssInjectedByJs` — inlines CSS into the JS bundle
 3. `resolveVirtualNavigators` — rewrites `navigator:*` imports to external URLs
@@ -53,6 +55,7 @@ mariner build --fleet shared-vue
 ```
 
 **How it works:**
+
 1. Find the common root directory of all fleet apps
 2. Merge all app configs (plugins deduped by name, externals combined)
 3. Build with multiple entries: `{ 'app1/navigator': '...', 'app2/navigator': '...' }`
@@ -72,11 +75,13 @@ dist/
 ```
 
 **Benefits of shared builds:**
+
 - Common dependencies are extracted into shared chunks
 - Smaller total bundle size across all apps
 - Browser caches shared chunks across apps
 
 **Plugins applied:**
+
 1. Merged user plugins (deduped)
 2. `cssInjectedByJs`
 3. `resolveVirtualNavigatorsShared` — same-fleet navigators resolved to files (bundled together), cross-fleet navigators remain external
@@ -92,6 +97,7 @@ mariner build --all --ssr
 ```
 
 **What changes with `--ssr`:**
+
 1. `useCargo()` is replaced with a `__MARINER_CARGO__` variable reference (not static JSON)
 2. After navigator builds complete, `buildCargo()` runs for each app that has a `cargo.ts`
 3. Cargo files are built as separate ESM modules to `dist/{appname}/cargo.js`
@@ -166,6 +172,7 @@ Use the manifest for server-side rendering or programmatic asset loading.
 Mariner uses `vite-plugin-css-injected-by-js` to inline all CSS into the navigator bundle. There are **no separate CSS files** in the build output. When the navigator loads, it creates `<style>` elements and appends them to the document.
 
 This design ensures:
+
 - Single-file deployment (one `navigator.js` per app)
 - No FOUC (flash of unstyled content) — styles load with the code
 - No need to configure CSS loading in the host page
@@ -192,6 +199,7 @@ mariner build --navigator app1
 ```
 
 This is useful for:
+
 - Incremental deployments (rebuild only what changed)
 - CI pipelines that build apps in separate jobs
 - Faster iteration when working on a single app
@@ -205,6 +213,7 @@ mariner build --all --rootBase /microfrontends
 ```
 
 This affects:
+
 - Cross-app import URLs: `/microfrontends/shared/navigator.js`
 - Asset paths in the built output
 - Serve server routing expectations

@@ -42,6 +42,7 @@ The `mariner` field is slugified before use in URLs and imports:
 ```
 
 The slugified name is used everywhere:
+
 - URL: `http://localhost:3000/my-app/navigator.js`
 - Import: `import { ... } from 'navigator:my-app'`
 - Build output: `dist/my-app/navigator.js`
@@ -73,12 +74,12 @@ Commonly used Vite options:
 
 These settings are applied by Mariner and **cannot be overridden**, even if you set them explicitly:
 
-| Setting                                        | Value            | Purpose                                       |
-| ---------------------------------------------- | ---------------- | --------------------------------------------- |
-| `build.manifest`                               | `true`           | Always generates `.vite/manifest.json`        |
-| `build.modulePreload.polyfill`                 | `false`          | Navigators are loaded dynamically, not via `<link rel="modulepreload">` |
-| `build.rolldownOptions.input`                  | `'navigator'`    | Entry point is always the navigator file      |
-| `build.rolldownOptions.preserveEntrySignatures` | `'exports-only'` | Preserves the export shape of navigator files |
+| Setting                                         | Value            | Purpose                                                                 |
+| ----------------------------------------------- | ---------------- | ----------------------------------------------------------------------- |
+| `build.manifest`                                | `true`           | Always generates `.vite/manifest.json`                                  |
+| `build.modulePreload.polyfill`                  | `false`          | Navigators are loaded dynamically, not via `<link rel="modulepreload">` |
+| `build.rolldownOptions.input`                   | `'navigator'`    | Entry point is always the navigator file                                |
+| `build.rolldownOptions.preserveEntrySignatures` | `'exports-only'` | Preserves the export shape of navigator files                           |
 
 These defaults ensure that the built output is always a standalone navigator module with a predictable structure.
 
@@ -96,12 +97,12 @@ For example, if Mariner has default plugins `[A, B]` and you specify `plugins: [
 
 Mariner adds these plugins automatically during dev and build. You don't need to include them:
 
-| Plugin                       | Purpose                                           |
-| ---------------------------- | ------------------------------------------------- |
-| `cssInjectedByJs`           | Inlines CSS into the JS bundle (build only)       |
-| `resolveVirtualNavigators`   | Resolves `navigator:*` imports                    |
-| `resolveCargo`              | Transforms `useCargo()` calls                     |
-| `transformBuildAssets`       | Hashes static assets in production (build only)   |
+| Plugin                     | Purpose                                         |
+| -------------------------- | ----------------------------------------------- |
+| `cssInjectedByJs`          | Inlines CSS into the JS bundle (build only)     |
+| `resolveVirtualNavigators` | Resolves `navigator:*` imports                  |
+| `resolveCargo`             | Transforms `useCargo()` calls                   |
+| `transformBuildAssets`     | Hashes static assets in production (build only) |
 
 These run alongside your user plugins. The cargo plugin runs without `enforce`, meaning it executes after framework plugins like `@vitejs/plugin-vue` — this ensures `<script setup>` is already compiled when the `useCargo()` transform runs.
 
@@ -201,11 +202,11 @@ export default defineMarinerConfig({
 
 ## File Format
 
-| File                 | Supported | Notes                                    |
-| -------------------- | --------- | ---------------------------------------- |
-| `mariner.config.ts`  | Yes       | Preferred — full TypeScript support      |
-| `mariner.config.js`  | Yes       | Works, but no type inference from IDE    |
-| `mariner.config.mts` | No        | Not recognized by Mariner's scanner      |
+| File                 | Supported | Notes                                      |
+| -------------------- | --------- | ------------------------------------------ |
+| `mariner.config.ts`  | Yes       | Preferred — full TypeScript support        |
+| `mariner.config.js`  | Yes       | Works, but no type inference from IDE      |
+| `mariner.config.mts` | No        | Not recognized by Mariner's scanner        |
 | `vite.config.ts`     | No        | Mariner ignores standard Vite config names |
 
 ::: warning

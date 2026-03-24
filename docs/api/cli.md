@@ -6,21 +6,22 @@ The Mariner CLI is available as `mariner` after installing `mariner-fe`. All com
 
 These options are shared across most commands:
 
-| Option                  | Description                             | Default  |
-| ----------------------- | --------------------------------------- | -------- |
-| `--all`                 | Select all discovered navigators        | `false`  |
-| `--navigator <name>`    | Select a specific navigator by name     | —        |
-| `--fleet <name>`        | Select a specific fleet group           | —        |
-| `-m, --mode <mode>`     | Vite mode (loads `.env.{mode}`)         | varies   |
-| `-t, --threads <n>`     | Worker threads for parallel operations  | auto     |
-| `-b, --rootBase <base>` | Base path prefix for URLs               | `''`     |
-| `-d, --debug`           | Enable debug logging                    | `false`  |
+| Option                  | Description                            | Default |
+| ----------------------- | -------------------------------------- | ------- |
+| `--all`                 | Select all discovered navigators       | `false` |
+| `--navigator <name>`    | Select a specific navigator by name    | —       |
+| `--fleet <name>`        | Select a specific fleet group          | —       |
+| `-m, --mode <mode>`     | Vite mode (loads `.env.{mode}`)        | varies  |
+| `-t, --threads <n>`     | Worker threads for parallel operations | auto    |
+| `-b, --rootBase <base>` | Base path prefix for URLs              | `''`    |
+| `-d, --debug`           | Enable debug logging                   | `false` |
 
 ### Navigator Selection
 
 When no selection flags (`--all`, `--navigator`, `--fleet`) are provided, the CLI shows an **interactive prompt** with checkboxes, letting you choose which navigators to run or build. Invalid apps (those missing a `navigator.ts/js`) appear in the list but are disabled.
 
 The selection priority is:
+
 1. `--all` — selects everything (overrides other flags)
 2. `--navigator <name>` — selects a single app by Mariner name
 3. `--fleet <name>` — selects all apps in the named fleet
@@ -104,6 +105,7 @@ http(s)://hostname:port/{appname}/navigator.js
 ```
 
 Examples:
+
 ```
 http://localhost:3000/app1/navigator.js
 http://localhost:3000/shared/navigator.js
@@ -111,6 +113,7 @@ https://localhost:3000/app1/navigator.js  (with --https)
 ```
 
 With `--rootBase`:
+
 ```
 http://localhost:3000/mybase/app1/navigator.js
 ```
@@ -159,11 +162,13 @@ When `--ssr` is set:
 ### Build Modes
 
 **Isolated fleet / no fleet:**
+
 - Each app built independently in a worker thread
 - Apps built in parallel for speed
 - Cross-app imports (`navigator:*`) rewritten to external URLs
 
 **Shared fleet:**
+
 - Single Vite build with multiple entry points
 - Shared dependencies extracted into `chunks/` directory
 - Intra-fleet imports bundled together
