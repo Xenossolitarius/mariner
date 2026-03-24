@@ -29,7 +29,7 @@ pnpm check                 # lint + typecheck + unit tests
 pnpm check:full            # check + integration tests + E2E tests
 pnpm lint                  # ESLint across entire project
 pnpm typecheck             # tsc --noEmit on mariner-fe
-pnpm test                  # Unit tests (fast, 343 tests)
+pnpm test                  # Unit tests (fast, 355 tests)
 pnpm test:coverage         # Unit tests with V8 coverage
 pnpm test:integration      # Build integration tests (needs `pnpm build` first)
 pnpm test:e2e              # Playwright E2E tests (auto-starts servers)
@@ -72,3 +72,26 @@ pnpm client:build          # Serve built playground on port 3000
 - URL routing: `/{appname}/navigator.js` → app's navigator entry
 - CORS headers set inline, HTTPS via `node:https` with auto-generated certs
 - `optimizeDeps.entries` pointed at navigator files for proper pre-bundling
+
+## HMR (Hot Module Replacement)
+
+- Works out of the box for Vue, React, and CSS — no manual setup required
+- **Cargo HMR**: `resolve-cargo` plugin has `handleHotUpdate` hook — when `cargo.ts/js` changes, invalidates the virtual module and triggers full page reload to re-execute the cargo function with fresh data
+- **Cross-App HMR Bridge** (`src/server/dev/hmr-bridge.ts`): In isolated mode, connects all Vite dev servers via file watchers. When a navigator file changes in one server, all other servers send `full-reload` to their browser clients so consuming apps pick up updated cross-app imports
+- Shared fleet mode: Vite's native module graph handles cross-app HMR automatically (navigators resolve to actual file paths within one Vite instance)
+
+## Publishing
+
+Uses GitHub Actions (`.github/workflows/publish.yml`). Triggered by creating a GitHub Release:
+
+1. Create a git tag: `git tag v2.1.0 && git push --tags`
+2. Create a GitHub Release from that tag (via UI or `gh release create v2.1.0`)
+3. The workflow runs: lint → typecheck → unit tests → integration tests → build → publish
+4. Version in `package.json` is overwritten by the release tag (`v2.1.0` → `2.1.0`)
+5. Requires `NPM_TOKEN` secret configured in repo settings
+
+## Documentation
+
+- VitePress site in `docs/` — deploy via `.github/workflows/docs.yml`
+- Sidebar config: `docs/.vitepress/config.ts`
+- Sections: Getting Started, Guide (Core Concepts, Framework Guides, Advanced), API Reference, Examples

@@ -1,6 +1,6 @@
 {
   "name": "mariner-fe",
-  "version": "1.0.1",
+  "version": "2.1.0",
   "description": "Open-source microfrontend framework built on Vite. Framework-agnostic, supports Vue, React, and plain JS.",
   "author": "Ivan Pešić",
   "repository": {
